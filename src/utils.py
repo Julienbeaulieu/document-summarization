@@ -1,7 +1,8 @@
 from rouge_score import rouge_scorer
+from typing import Dict, List
 
 
-def calculate_rouge_scores(targets, preds):
+def calculate_rouge_scores(targets: List, preds: List) -> Dict:
 
     # TODO: Make this function more efficient
 

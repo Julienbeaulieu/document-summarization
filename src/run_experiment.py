@@ -1,10 +1,9 @@
-################
-# Run a basic experiment which fine tunes T5 model from hugging face using news_summary dataset
-# Run validation, get average Rouge scores on predictions and save predictions to csv
-###############
+'''
+Run a basic experiment which fine tunes T5 model from hugging face using news_summary dataset
+Run validation, get average Rouge scores on predictions and save predictions to csv
+'''
 
 import wandb
-import os
 import pandas as pd
 import numpy as np
 import pickle
@@ -16,29 +15,21 @@ from transformers import T5Tokenizer, T5ForConditionalGeneration
 
 from .data.news_dataset import NewsDataset
 from .engine import train_model, validate_model
+from .configs.news_summary_configs import add_news_summary_configs
 
-# TODO: Create env file and use Environs to handle local vars
+# TODO: Create env file and use Environs library to handle local vars
 data_path = Path('/home/julien/data-science/nlp-project/dataset/processed')
-weights_path = Path('/home/julien/data-science/nlp-project/weights')
 
 device = 'cuda' if cuda.is_available() else 'cpu'
 
 
 def main():
     # WandB – Initialize a new run
-    wandb.init(project="transformers_tutorials_summarization")
+    configs = add_news_summary_configs()    
+    
+    wandb.init(project="transformers_tutorials_summarization", config=configs)
 
-    # WandB – Config is a variable that holds and saves hyperparameters and inputs
-    # Defining some key variables that will be used later on in the training
-    config = wandb.config          # Initialize config
-    config.TRAIN_BATCH_SIZE = 2    # input batch size for training (default: 64)
-    config.VALID_BATCH_SIZE = 2    # input batch size for testing (default: 1000)
-    config.TRAIN_EPOCHS = 1        # number of epochs to train (default: 10)
-    config.LEARNING_RATE = 1e-4    # learning rate (default: 0.01)
-    config.SEED = 42               # random seed (default: 42)
-    config.MAX_LEN = 512
-    config.SUMMARY_LEN = 150
-    config.STATE_FPATH = os.path.join(weights_path, f'model_{config.TRAIN_EPOCHS}_epochs')
+    config = wandb.config
 
     # Set random seeds and deterministic pytorch for reproducibility
     torch.manual_seed(config.SEED)  # pytorch random seed

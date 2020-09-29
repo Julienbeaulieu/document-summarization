@@ -8,7 +8,7 @@ data_path = Path('/home/julien/data-science/nlp-project/dataset')
 
 @click.command()
 @click.option('--size', default=0, help="create a sample training and validation set")
-def create_datasets(size=0, train_test_split=0.8):
+def create_datasets(size: int = 0, train_test_split: float = 0.8):
 
     df = pd.read_csv(data_path / 'raw/news_summary.csv', encoding='latin-1')
     df = df[['text', 'ctext']]

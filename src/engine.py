@@ -1,11 +1,14 @@
 
 import torch
 import wandb
+from time import time
+from torch.utils.data import DataLoader
+from typing import List, Union
 
 from .utils import calculate_rouge_scores
 
 
-def train_model(epoch, tokenizer, model, device, loader, optimizer):
+def train_model(epoch: int, tokenizer, model, device, loader: DataLoader, optimizer):
     model.train()
     for _, data in enumerate(loader, 0):
         y = data['target_ids'].to(device, dtype=torch.long)
@@ -30,7 +33,7 @@ def train_model(epoch, tokenizer, model, device, loader, optimizer):
         optimizer.step()
 
 
-def validate_model(epoch, tokenizer, model, device, loader):
+def validate_model(epoch: int, tokenizer, model, device, loader: DataLoader) -> List:
     model.eval()
     predictions = []
     actuals = []
@@ -49,10 +52,9 @@ def validate_model(epoch, tokenizer, model, device, loader):
                                            early_stopping=True
                                            )
             preds = [tokenizer.decode(g, skip_special_tokens=True,
-                                      clean_up_tokenization_spaces=True) for g in generated_ids]                                   
+                                      clean_up_tokenization_spaces=True) for g in generated_ids]                              
             target = [tokenizer.decode(t, skip_special_tokens=True,
-                                       clean_up_tokenization_spaces=True) for t in y]
-                                      
+                                       clean_up_tokenization_spaces=True) for t in y]                                  
             predictions.extend(preds)
             actuals.extend(target)
            
@@ -60,8 +62,10 @@ def validate_model(epoch, tokenizer, model, device, loader):
                 print(f'Completed {_}')
 
                 # Log rouge scores
+                t = time()
                 eval_dict = calculate_rouge_scores(actuals, predictions)
                 wandb.log(eval_dict)
-                print(eval_dict)
+                time_taken = time() - t
+                print(f'Rouge scores: {eval_dict} \n Time taken: {time_taken}')
 
     return predictions, actuals
