@@ -10,15 +10,14 @@ import pickle
 import torch
 from torch import cuda
 from pathlib import Path
-from torch.utils.data import DataLoader
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 
-from .data.news_dataset import NewsDataset
 from .engine import train_model, validate_model
 from .configs.news_summary_configs import add_news_summary_configs
+from .data.news_dataset import build_news_loader
 
 # TODO: Create env file and use Environs library to handle local vars
-data_path = Path('/home/julien/data-science/nlp-project/dataset/processed')
+data_path = Path('/home/nasty/document-summarization/dataset/processed')
 
 device = 'cuda' if cuda.is_available() else 'cpu'
 
@@ -39,29 +38,32 @@ def main():
     # tokenzier for encoding the text
     tokenizer = T5Tokenizer.from_pretrained("t5-base")
 
-    df_train = pickle.load(open(data_path / 'news_training_128.p', 'rb'))
-    df_valid = pickle.load(open(data_path / 'news_validation_32.p', 'rb'))
+    train_data = pickle.load(open(data_path / 'news_training_128.p', 'rb'))
+    valid_data = pickle.load(open(data_path / 'news_validation_32.p', 'rb'))
 
-    training_set = NewsDataset(df_train, tokenizer, config.MAX_LEN, config.SUMMARY_LEN)
-    val_set = NewsDataset(df_valid, tokenizer, config.MAX_LEN, config.SUMMARY_LEN)
+    train_loader = build_news_loader(train_data, tokenizer, config, True)
+    val_loader = build_news_loader(valid_data, tokenizer, config, False)
 
-    # Defining the parameters for creation of dataloaders
-    train_params = {
-        'batch_size': config.TRAIN_BATCH_SIZE,
-        'shuffle': True,
-        'num_workers': 0
-        }
+    # training_set = NewsDataset(df_train, tokenizer, config.MAX_LEN, config.SUMMARY_LEN)
+    # val_set = NewsDataset(df_valid, tokenizer, config.MAX_LEN, config.SUMMARY_LEN)
 
-    val_params = {
-        'batch_size': config.VALID_BATCH_SIZE,
-        'shuffle': False,
-        'num_workers': 0
-        }
+    # # Defining the parameters for creation of dataloaders
+    # train_params = {
+    #     'batch_size': config.TRAIN_BATCH_SIZE,
+    #     'shuffle': True,
+    #     'num_workers': 0
+    #     }
+
+    # val_params = {
+    #     'batch_size': config.VALID_BATCH_SIZE,
+    #     'shuffle': False,
+    #     'num_workers': 0
+    #     }
 
     # Creation of Dataloaders for testing and validation. This will be used down for training and
     # validation stage for the model.
-    training_loader = DataLoader(training_set, **train_params)
-    val_loader = DataLoader(val_set, **val_params)
+    # training_loader = DataLoader(training_set, **train_params)
+    # val_loader = DataLoader(val_set, **val_params)
 
     model = T5ForConditionalGeneration.from_pretrained("t5-base")
     model = model.to(device)
@@ -74,7 +76,7 @@ def main():
     print('Initiating Fine-Tuning for the model on our dataset')
 
     for epoch in range(config.TRAIN_EPOCHS):
-        train_model(epoch, tokenizer, model, device, training_loader, optimizer)
+        train_model(epoch, tokenizer, model, device, train_loader, optimizer)
         predictions, actuals = validate_model(epoch, tokenizer, model, device, val_loader)
     
     # Save model weights

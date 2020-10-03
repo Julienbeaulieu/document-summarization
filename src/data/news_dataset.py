@@ -1,5 +1,10 @@
 import torch
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader
+import pandas as pd
+
+from pathlib import Path
+data_path = Path('/home/nasty/document-summarization/dataset/processed')
+
 
 class NewsDataset(Dataset):
 
@@ -32,7 +37,7 @@ class NewsDataset(Dataset):
                                                   pad_to_max_length=True,
                                                   return_tensors='pt', 
                                                   truncation=True
-                                                )
+                                                  )
 
         source_ids = source['input_ids'].squeeze()
         source_mask = source['attention_mask'].squeeze()
@@ -45,3 +50,27 @@ class NewsDataset(Dataset):
             'target_ids': target_ids.to(dtype=torch.long),
             'target_ids_y': target_mask.to(dtype=torch.long)
         }
+
+
+def build_news_loader(df: pd.DataFrame, tokenizer, config, is_training: bool) -> DataLoader:
+    """
+    generate data loader
+    :param df: DataFrame
+    :tokenizer: model tokenizer
+    :param config: weights and biases config object
+    :param is_training: whether training
+    :return: data loader
+    """
+
+    if is_training:
+        batch_size = config.TRAIN_BATCH_SIZE
+    else:
+        batch_size = config.VALID_BATCH_SIZE
+
+    dataset = NewsDataset(df, tokenizer, config.MAX_LEN, config.SUMMARY_LEN)
+    
+    # limit the number of works based on CPU number.
+    # num_workers = min(batch_size, data_cfg.CPU_NUM)
+
+    data_loader = DataLoader(dataset, batch_size=batch_size, shuffle=is_training)
+    return data_loader

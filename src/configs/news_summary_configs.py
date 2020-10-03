@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-weights_path = Path('/home/julien/data-science/nlp-project/weights')
+weights_path = Path('/home/nasty/document-summarization/weights')
 
 
 def add_news_summary_configs():

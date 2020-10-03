@@ -3,8 +3,7 @@ import click
 import pandas as pd
 from pathlib import Path
 
-data_path = Path('/home/julien/data-science/nlp-project/dataset')
-
+data_path = Path('/home/nasty/document-summarization/dataset')
 
 @click.command()
 @click.option('--size', default=0, help="create a sample training and validation set")
@@ -30,10 +29,8 @@ def create_datasets(size: int = 0, train_test_split: float = 0.8):
     print("TRAIN Dataset: {}".format(train_dataset.shape))
     print("VALIDATION Dataset: {}".format(val_dataset.shape))
 
-    with open(data_path / f'processed/news_training_{train_dataset.shape[0]}.p', "wb") as f:
-        pickle.dump(train_dataset, f)
-    with open(data_path / f'processed/news_validation_{val_dataset.shape[0]}.p', "wb") as f:
-        pickle.dump(val_dataset, f)
+    pickle.dump(train_dataset, open(data_path / f'processed/news_training_{train_dataset.shape[0]}.p', "wb"))
+    pickle.dump(val_dataset, open(data_path / f'processed/news_validation_{val_dataset.shape[0]}.p', "wb"))
 
 
 if __name__ == '__main__':
