@@ -1,0 +1,11 @@
+flake8
+ipykernel
+ipywidgets
+numpy
+pandas
+rouge-score
+tensorboard
+torch
+transformers
+wandb
+yacs
