@@ -2,6 +2,7 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 import pandas as pd
 
+from yacs.config import CfgNode
 from pathlib import Path
 data_path = Path('/home/nasty/document-summarization/dataset/processed')
 
@@ -26,16 +27,16 @@ class NewsDataset(Dataset):
         text = str(self.text[index])
         text = ' '.join(text.split())
 
-        source = self.tokenizer.batch_encode_plus([ctext], 
-                                                  max_length=self.source_len, 
+        source = self.tokenizer.batch_encode_plus([ctext],
+                                                  max_length=self.source_len,
                                                   pad_to_max_length=True,
-                                                  return_tensors='pt', 
+                                                  return_tensors='pt',
                                                   truncation=True
                                                   )
-        target = self.tokenizer.batch_encode_plus([text], 
-                                                  max_length=self.summ_len, 
+        target = self.tokenizer.batch_encode_plus([text],
+                                                  max_length=self.summ_len,
                                                   pad_to_max_length=True,
-                                                  return_tensors='pt', 
+                                                  return_tensors='pt',
                                                   truncation=True
                                                   )
 
@@ -45,14 +46,14 @@ class NewsDataset(Dataset):
         target_mask = target['attention_mask'].squeeze()
 
         return {
-            'source_ids': source_ids.to(dtype=torch.long), 
-            'source_mask': source_mask.to(dtype=torch.long), 
+            'source_ids': source_ids.to(dtype=torch.long),
+            'source_mask': source_mask.to(dtype=torch.long),
             'target_ids': target_ids.to(dtype=torch.long),
             'target_ids_y': target_mask.to(dtype=torch.long)
         }
 
 
-def build_news_loader(df: pd.DataFrame, tokenizer, config, is_training: bool) -> DataLoader:
+def build_news_loader(df: pd.DataFrame, tokenizer, cfg: CfgNode, is_training: bool) -> DataLoader:
     """
     generate data loader
     :param df: DataFrame
@@ -63,11 +64,11 @@ def build_news_loader(df: pd.DataFrame, tokenizer, config, is_training: bool) ->
     """
 
     if is_training:
-        batch_size = config.TRAIN_BATCH_SIZE
+        batch_size = cfg.TRAIN_BATCH_SIZE
     else:
-        batch_size = config.VALID_BATCH_SIZE
+        batch_size = cfg.VALID_BATCH_SIZE
 
-    dataset = NewsDataset(df, tokenizer, config.MAX_LEN, config.SUMMARY_LEN)
+    dataset = NewsDataset(df, tokenizer, cfg.MAX_LEN, cfg.SUMMARY_LEN)
     
     # limit the number of works based on CPU number.
     # num_workers = min(batch_size, data_cfg.CPU_NUM)

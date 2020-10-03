@@ -11,10 +11,11 @@ import torch
 from torch import cuda
 from pathlib import Path
 from transformers import T5Tokenizer, T5ForConditionalGeneration
+from yacs.config import CfgNode
 
 from .engine import train_model, validate_model
-from .configs.news_summary_configs import add_news_summary_configs
 from .data.news_dataset import build_news_loader
+from .configs.yacs_configs import get_cfg_defaults, cfg_to_dict
 
 # TODO: Create env file and use Environs library to handle local vars
 data_path = Path('/home/nasty/document-summarization/dataset/processed')
@@ -22,17 +23,15 @@ data_path = Path('/home/nasty/document-summarization/dataset/processed')
 device = 'cuda' if cuda.is_available() else 'cpu'
 
 
-def main():
-    # WandB – Initialize a new run
-    configs = add_news_summary_configs()    
+def main(cfg: CfgNode):
     
+    # WandB – Initialize a new run
+    configs = cfg_to_dict(cfg.clone())
     wandb.init(project="transformers_tutorials_summarization", config=configs)
-
-    config = wandb.config
-
+    
     # Set random seeds and deterministic pytorch for reproducibility
-    torch.manual_seed(config.SEED)  # pytorch random seed
-    np.random.seed(config.SEED)  # numpy random seed
+    torch.manual_seed(cfg.TRAINING.SEED)  # pytorch random seed
+    np.random.seed(cfg.TRAINING.SEED)  # numpy random seed
     torch.backends.cudnn.deterministic = True
 
     # tokenzier for encoding the text
@@ -41,47 +40,26 @@ def main():
     train_data = pickle.load(open(data_path / 'news_training_128.p', 'rb'))
     valid_data = pickle.load(open(data_path / 'news_validation_32.p', 'rb'))
 
-    train_loader = build_news_loader(train_data, tokenizer, config, True)
-    val_loader = build_news_loader(valid_data, tokenizer, config, False)
-
-    # training_set = NewsDataset(df_train, tokenizer, config.MAX_LEN, config.SUMMARY_LEN)
-    # val_set = NewsDataset(df_valid, tokenizer, config.MAX_LEN, config.SUMMARY_LEN)
-
-    # # Defining the parameters for creation of dataloaders
-    # train_params = {
-    #     'batch_size': config.TRAIN_BATCH_SIZE,
-    #     'shuffle': True,
-    #     'num_workers': 0
-    #     }
-
-    # val_params = {
-    #     'batch_size': config.VALID_BATCH_SIZE,
-    #     'shuffle': False,
-    #     'num_workers': 0
-    #     }
-
-    # Creation of Dataloaders for testing and validation. This will be used down for training and
-    # validation stage for the model.
-    # training_loader = DataLoader(training_set, **train_params)
-    # val_loader = DataLoader(val_set, **val_params)
+    train_loader = build_news_loader(train_data, tokenizer, cfg.TRAINING, True)
+    val_loader = build_news_loader(valid_data, tokenizer, cfg.TRAINING, False)
 
     model = T5ForConditionalGeneration.from_pretrained("t5-base")
     model = model.to(device)
 
-    optimizer = torch.optim.Adam(params=model.parameters(), lr=config.LEARNING_RATE)
+    optimizer = torch.optim.Adam(params=model.parameters(), lr=cfg.TRAINING.LEARNING_RATE)
 
     # Log metrics with wandb
     wandb.watch(model, log="all")
     # Training loop
     print('Initiating Fine-Tuning for the model on our dataset')
 
-    for epoch in range(config.TRAIN_EPOCHS):
+    for epoch in range(cfg.TRAINING.TRAIN_EPOCHS):
         train_model(epoch, tokenizer, model, device, train_loader, optimizer)
         predictions, actuals = validate_model(epoch, tokenizer, model, device, val_loader)
     
     # Save model weights
     print(f"Saving the model {epoch}")
-    model.save_pretrained(config.STATE_FPATH)
+    model.save_pretrained(cfg.PATH.STATE_FPATH)
  
     print('Now generating summaries on our fine tuned model for the validation dataset and saving it in a dataframe')
 
@@ -91,4 +69,5 @@ def main():
     
 
 if __name__ == '__main__':
-    main()
+    cfg = get_cfg_defaults() 
+    main(cfg)
