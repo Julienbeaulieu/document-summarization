@@ -3,7 +3,7 @@ import torch
 import wandb
 from time import time
 from torch.utils.data import DataLoader
-from typing import List, Union
+from typing import List
 
 from .utils import calculate_rouge_scores
 

@@ -4,6 +4,7 @@ import pandas as pd
 
 from yacs.config import CfgNode
 from pathlib import Path
+
 data_path = Path('/home/nasty/document-summarization/dataset/processed')
 
 
@@ -69,9 +70,6 @@ def build_news_loader(df: pd.DataFrame, tokenizer, cfg: CfgNode, is_training: bo
         batch_size = cfg.VALID_BATCH_SIZE
 
     dataset = NewsDataset(df, tokenizer, cfg.MAX_LEN, cfg.SUMMARY_LEN)
-    
-    # limit the number of works based on CPU number.
-    # num_workers = min(batch_size, data_cfg.CPU_NUM)
 
     data_loader = DataLoader(dataset, batch_size=batch_size, shuffle=is_training)
     return data_loader

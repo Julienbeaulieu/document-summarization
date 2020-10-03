@@ -10,12 +10,13 @@ import pickle
 import torch
 from torch import cuda
 from pathlib import Path
-from transformers import T5Tokenizer, T5ForConditionalGeneration
+#from transformers import T5Tokenizer, T5ForConditionalGeneration
 from yacs.config import CfgNode
 
 from .engine import train_model, validate_model
 from .data.news_dataset import build_news_loader
 from .configs.yacs_configs import get_cfg_defaults, cfg_to_dict
+from .models.build_model import build_model
 
 # TODO: Create env file and use Environs library to handle local vars
 data_path = Path('/home/nasty/document-summarization/dataset/processed')
@@ -35,16 +36,18 @@ def main(cfg: CfgNode):
     torch.backends.cudnn.deterministic = True
 
     # tokenzier for encoding the text
-    tokenizer = T5Tokenizer.from_pretrained("t5-base")
+    print(cfg.MODEL)
 
+    model, tokenizer = build_model(cfg.MODEL)
+    model = model.to(device)
+ 
     train_data = pickle.load(open(data_path / 'news_training_128.p', 'rb'))
     valid_data = pickle.load(open(data_path / 'news_validation_32.p', 'rb'))
 
     train_loader = build_news_loader(train_data, tokenizer, cfg.TRAINING, True)
     val_loader = build_news_loader(valid_data, tokenizer, cfg.TRAINING, False)
 
-    model = T5ForConditionalGeneration.from_pretrained("t5-base")
-    model = model.to(device)
+    #model = T5ForConditionalGeneration.from_pretrained("t5-base")
 
     optimizer = torch.optim.Adam(params=model.parameters(), lr=cfg.TRAINING.LEARNING_RATE)
 

@@ -13,6 +13,7 @@ __C = ConfigurationNode()
 
 cfg = __C
 __C.DESCRIPTION = 'Default config from the Singleton'
+
 __C.TRAINING = ConfigurationNode()
 __C.TRAINING.TRAIN_BATCH_SIZE = 2
 __C.TRAINING.VALID_BATCH_SIZE = 2
@@ -21,6 +22,11 @@ __C.TRAINING.LEARNING_RATE = 1e-4
 __C.TRAINING.SEED = 42
 __C.TRAINING.MAX_LEN = 512
 __C.TRAINING.SUMMARY_LEN = 150
+
+__C.MODEL = ConfigurationNode()
+__C.MODEL.MODEL_ARCH = 't5'
+__C.MODEL.PRETRAINED = 't5-base'
+__C.MODEL.TOK_PRETRAINED = 't5-base'
 
 __C.PATH = ConfigurationNode()
 __C.PATH.STATE_FPATH = os.path.join(weights_path, f'model_{__C.TRAINING.TRAIN_EPOCHS}_epochs')
