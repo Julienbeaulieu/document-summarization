@@ -1,5 +1,5 @@
 #!/bin/bash
-# set -uo pipefail
+#set -uo pipefail
 set +e
 
 FAILURE=false
@@ -22,8 +22,8 @@ mypy api src || FAILURE=true
 echo "bandit"
 bandit -ll -r {api,src} || FAILURE=true
 
-# echo "shellcheck"
-# shellcheck tasks/*.sh || FAILURE=true
+echo "shellcheck"
+shellcheck tasks/*.sh || FAILURE=true
 
 if [ "$FAILURE" = true ]; then
   echo "Linting failed"
