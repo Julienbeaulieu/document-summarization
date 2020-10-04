@@ -10,7 +10,6 @@ import pickle
 import torch
 from torch import cuda
 from pathlib import Path
-#from transformers import T5Tokenizer, T5ForConditionalGeneration
 from yacs.config import CfgNode
 
 from .engine import train_model, validate_model
@@ -25,29 +24,26 @@ device = 'cuda' if cuda.is_available() else 'cpu'
 
 
 def main(cfg: CfgNode):
-    
+
     # WandB – Initialize a new run
     configs = cfg_to_dict(cfg.clone())
     wandb.init(project="transformers_tutorials_summarization", config=configs)
-    
+
     # Set random seeds and deterministic pytorch for reproducibility
     torch.manual_seed(cfg.TRAINING.SEED)  # pytorch random seed
     np.random.seed(cfg.TRAINING.SEED)  # numpy random seed
     torch.backends.cudnn.deterministic = True
 
     # tokenzier for encoding the text
-    print(cfg.MODEL)
 
-    model, tokenizer = build_model(cfg.MODEL)
-    model = model.to(device)
- 
+    model, tokenizer = build_model(cfg.MODEL)  # type: ignore
+    model = model.to(device)  # type: ignore
+
     train_data = pickle.load(open(data_path / 'news_training_128.p', 'rb'))
     valid_data = pickle.load(open(data_path / 'news_validation_32.p', 'rb'))
 
-    train_loader = build_news_loader(train_data, tokenizer, cfg.TRAINING, True)
-    val_loader = build_news_loader(valid_data, tokenizer, cfg.TRAINING, False)
-
-    #model = T5ForConditionalGeneration.from_pretrained("t5-base")
+    train_loader = build_news_loader(train_data, tokenizer, cfg.TRAINING, True)  # type: ignore
+    val_loader = build_news_loader(valid_data, tokenizer, cfg.TRAINING, False)  # type: ignore
 
     optimizer = torch.optim.Adam(params=model.parameters(), lr=cfg.TRAINING.LEARNING_RATE)
 
@@ -57,20 +53,20 @@ def main(cfg: CfgNode):
     print('Initiating Fine-Tuning for the model on our dataset')
 
     for epoch in range(cfg.TRAINING.TRAIN_EPOCHS):
-        train_model(epoch, tokenizer, model, device, train_loader, optimizer)
-        predictions, actuals = validate_model(epoch, tokenizer, model, device, val_loader)
-    
+        train_model(epoch, tokenizer, model, device, train_loader, optimizer)  # type: ignore
+        predictions, actuals = validate_model(epoch, tokenizer, model, device, val_loader)  # type: ignore
+
     # Save model weights
     print(f"Saving the model {epoch}")
     model.save_pretrained(cfg.PATH.STATE_FPATH)
- 
+
     print('Now generating summaries on our fine tuned model for the validation dataset and saving it in a dataframe')
 
     final_df = pd.DataFrame({'Generated Text': predictions, 'Actual Text': actuals})
     final_df.to_csv('./models/predictions.csv')
     print('Output Files generated for review')
-    
+
 
 if __name__ == '__main__':
-    cfg = get_cfg_defaults() 
+    cfg = get_cfg_defaults()
     main(cfg)

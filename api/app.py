@@ -1,4 +1,4 @@
-import os 
+import os
 from flask import Flask, request, jsonify
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 
@@ -20,17 +20,18 @@ def predict():
     text = request.args.get("text")
 
     tokenizer = T5Tokenizer.from_pretrained('t5-small')
-    model = T5ForConditionalGeneration.from_pretrained('/home/julien/data-science/nlp-project/weights/model_1_epochs', return_dict=True)
+    model = T5ForConditionalGeneration.from_pretrained('/home/julien/data-science/nlp-project/weights/model_1_epochs',
+                                                       return_dict=True)
     input_ids = tokenizer.encode(text, return_tensors="pt")  # Batch size 1
-    outputs = model.generate(input_ids, 
-                             max_length=150, 
+    outputs = model.generate(input_ids,
+                             max_length=150,
                              num_beams=3,
-                             repetition_penalty=2.5, 
-                             length_penalty=1.0, 
+                             repetition_penalty=2.5,
+                             length_penalty=1.0,
                              early_stopping=True)
 
     pred = [tokenizer.decode(g,
-                             skip_special_tokens=True, 
+                             skip_special_tokens=True,
                              clean_up_tokenization_spaces=True) for g in outputs][0]
 
     return jsonify({'pred': str(pred)})

@@ -19,12 +19,12 @@ def calculate_rouge_scores(targets: List, preds: List) -> Dict:
                 rouge2_f1 += v.fmeasure
             if k == 'rougeL':
                 rougeL_f1 += v.fmeasure
-                
+
     eval_dict = {
-                    'rouge1': rouge1_f1 / len(scores),
-                    'rouge2': rouge2_f1 / len(scores),
-                    'rougeL': rougeL_f1 / len(scores)
-                }
+        'rouge1': rouge1_f1 / len(scores),
+        'rouge2': rouge2_f1 / len(scores),
+        'rougeL': rougeL_f1 / len(scores)
+    }
 
     return eval_dict
 

@@ -5,6 +5,7 @@ from pathlib import Path
 
 data_path = Path('/home/nasty/document-summarization/dataset')
 
+
 @click.command()
 @click.option('--size', default=0, help="create a sample training and validation set")
 def create_datasets(size: int = 0, train_test_split: float = 0.8):
