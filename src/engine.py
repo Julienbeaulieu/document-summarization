@@ -33,7 +33,7 @@ def train_model(epoch: int, tokenizer, model, device, loader: DataLoader, optimi
         optimizer.step()
 
 
-def validate_model(epoch: int, tokenizer, model, device, loader: DataLoader) -> Tuple[List[Any], List[Any]]:
+def validate_model(tokenizer, model, device, loader: DataLoader, wandb_log=True) -> Tuple[List[Any], List[Any]]:
     model.eval()
     predictions = []
     actuals = []
@@ -64,8 +64,9 @@ def validate_model(epoch: int, tokenizer, model, device, loader: DataLoader) -> 
                 # Log rouge scores
                 t = time()
                 eval_dict = calculate_rouge_scores(actuals, predictions)
-                wandb.log(eval_dict)
+                if wandb_log:
+                    wandb.log(eval_dict)
                 time_taken = time() - t
                 print(f'Rouge scores: {eval_dict} \n Time taken: {time_taken}')
 
-    return predictions, actuals
+    return predictions, actuals, eval_dict
