@@ -1,5 +1,5 @@
 import os
-import yacs 
+import yacs
 
 from yacs.config import CfgNode as ConfigurationNode
 from pathlib import Path

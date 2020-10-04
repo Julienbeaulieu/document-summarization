@@ -1,9 +1,14 @@
+bandit
 flake8
 ipykernel
 ipywidgets
+mypy
 numpy
 pandas
+pycodestyle
 rouge-score
+safety
+shellcheck-py
 tensorboard
 torch
 transformers

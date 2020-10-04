@@ -3,7 +3,7 @@ import torch
 import wandb
 from time import time
 from torch.utils.data import DataLoader
-from typing import List
+from typing import List, Tuple, Any
 
 from .utils import calculate_rouge_scores
 
@@ -27,13 +27,13 @@ def train_model(epoch: int, tokenizer, model, device, loader: DataLoader, optimi
 
         if _ % 500 == 0:
             print(f"Epoch: {epoch}, Loss: {loss.item()}")
-      
+
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
 
 
-def validate_model(epoch: int, tokenizer, model, device, loader: DataLoader) -> List:
+def validate_model(epoch: int, tokenizer, model, device, loader: DataLoader) -> Tuple[List[Any], List[Any]]:
     model.eval()
     predictions = []
     actuals = []
@@ -52,12 +52,12 @@ def validate_model(epoch: int, tokenizer, model, device, loader: DataLoader) -> 
                                            early_stopping=True
                                            )
             preds = [tokenizer.decode(g, skip_special_tokens=True,
-                                      clean_up_tokenization_spaces=True) for g in generated_ids]                              
+                                      clean_up_tokenization_spaces=True) for g in generated_ids]
             target = [tokenizer.decode(t, skip_special_tokens=True,
-                                       clean_up_tokenization_spaces=True) for t in y]                                  
+                                       clean_up_tokenization_spaces=True) for t in y]
             predictions.extend(preds)
             actuals.extend(target)
-           
+
             if _ % 100 == 0:
                 print(f'Completed {_}')
 
