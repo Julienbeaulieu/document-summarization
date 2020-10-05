@@ -20,6 +20,7 @@ def train_model(epoch: int, tokenizer, model, device, loader: DataLoader, optimi
 
         outputs = model(input_ids=ids, attention_mask=mask, decoder_input_ids=y_ids,
                         lm_labels=lm_labels)
+        print(outputs)
         loss = outputs[0]
 
         if _ % 10 == 0:

@@ -45,7 +45,7 @@ jobs:
           name: run linting
           when: always
           command: |
-            PYTHONPATH=. ./tasks/lint.sh
+            sh ./tasks/lint.sh
       # - run:
       #     name: run prediction tests
       #     when: always
@@ -53,8 +53,9 @@ jobs:
       #       cd lab8 && PYTHONPATH=. pytest -s text_recognizer/tests/*
       - run:
           name: run evaluation tests
+          when: always 
           command: |
-            PYTHONPATH=. pytest -s evaluation/*
+            python -m pytest -s evaluation/*
       # - store_artifacts:
       #     path: test-reports
       #     destination: test-reports
