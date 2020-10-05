@@ -45,7 +45,7 @@ jobs:
           name: run linting
           when: always
           command: |
-            sh ./tasks/lint.sh
+            sudo sh ./tasks/lint.sh
       # - run:
       #     name: run prediction tests
       #     when: always
