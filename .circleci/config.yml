@@ -41,21 +41,21 @@ jobs:
           paths:
             - ~/.local
 
-      - run:
-          name: run linting
-          when: always
-          command: |
-            sudo sh ./tasks/lint.sh
+      # - run:
+      #     name: run linting
+      #     when: always
+      #     command: |
+      #       sh ./tasks/lint.sh
       # - run:
       #     name: run prediction tests
       #     when: always
       #     command: |
       #       cd lab8 && PYTHONPATH=. pytest -s text_recognizer/tests/*
-      - run:
-          name: run evaluation tests
-          when: always 
-          command: |
-            python -m pytest -s evaluation/*
+      # - run:
+      #     name: run evaluation tests
+      #     when: always 
+      #     command: |
+      #       python -m pytest -s evaluation/*
       # - store_artifacts:
       #     path: test-reports
       #     destination: test-reports

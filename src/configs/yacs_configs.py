@@ -1,5 +1,6 @@
 import os
 import yacs
+import torch
 
 from yacs.config import CfgNode as ConfigurationNode
 from pathlib import Path
@@ -27,6 +28,7 @@ __C.MODEL = ConfigurationNode()
 __C.MODEL.MODEL_ARCH = 't5'
 __C.MODEL.PRETRAINED = 't5-base'
 __C.MODEL.TOK_PRETRAINED = 't5-base'
+__C.MODEL.DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 __C.PATH = ConfigurationNode()
 __C.PATH.STATE_FPATH = os.path.join(weights_path, f'model_{__C.TRAINING.TRAIN_EPOCHS}_epochs')
@@ -48,3 +50,7 @@ def cfg_to_dict(cfg):
                 cfg[k] = dict(v)
                 cfg_to_dict(v)
     return dict(cfg)
+
+
+def add_pretrained(cfg):
+    __C.MODEL.PRETRAINED = '/home/julien/data-science/nlp-project/weights/model_1_epochs'

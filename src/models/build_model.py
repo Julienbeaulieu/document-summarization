@@ -1,3 +1,4 @@
+import torch
 from yacs.config import CfgNode
 from torch import nn
 from ..utils import Registry
@@ -13,5 +14,6 @@ def build_model(model_cfg: CfgNode) -> nn.Module:
     """
     arch = model_cfg.MODEL_ARCH
     model = MODEL_ARCH_REGISTRY.get(arch)(model_cfg)  # type: ignore
+    model[0].to(torch.device(model_cfg.DEVICE))
 
     return model

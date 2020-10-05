@@ -9,7 +9,6 @@ pycodestyle
 pytest
 rouge-score
 safety
-shellcheck-py
 tensorboard
 torch
 transformers

@@ -20,8 +20,6 @@ from .models.build_model import build_model
 # TODO: Create env file and use Environs library to handle local vars
 data_path = Path('/home/nasty/document-summarization/dataset/processed')
 
-device = 'cuda' if cuda.is_available() else 'cpu'
-
 
 def main(cfg: CfgNode):
 
@@ -32,12 +30,11 @@ def main(cfg: CfgNode):
     # Set random seeds and deterministic pytorch for reproducibility
     torch.manual_seed(cfg.TRAINING.SEED)  # pytorch random seed
     np.random.seed(cfg.TRAINING.SEED)  # numpy random seed
-    torch.backends.cudnn.deterministic = True
+    # torch.backends.cudnn.deterministic = True
 
     # tokenzier for encoding the text
 
     model, tokenizer = build_model(cfg.MODEL)  # type: ignore
-    model = model.to(device)  # type: ignore
 
     train_data = pickle.load(open(data_path / 'news_training_128.p', 'rb'))
     valid_data = pickle.load(open(data_path / 'news_validation_32.p', 'rb'))
@@ -62,7 +59,7 @@ def main(cfg: CfgNode):
 
     print('Now generating summaries on our fine tuned model for the validation dataset and saving it in a dataframe')
 
-    final_df = pd.DataFrame({'Generated Text': predictions, 'Actual Text': actuals})
+    final_df = pd.DataFrame({'Generated Text': predictions, 'Actual Text': actuals})  # type: ignore
     final_df.to_csv('./models/predictions.csv')
     print('Output Files generated for review')
 

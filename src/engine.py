@@ -3,7 +3,7 @@ import torch
 import wandb
 from time import time
 from torch.utils.data import DataLoader
-from typing import List, Tuple, Any
+from typing import List, Tuple, Any, Dict
 
 from .utils import calculate_rouge_scores
 
@@ -34,7 +34,7 @@ def train_model(epoch: int, tokenizer, model, device, loader: DataLoader, optimi
         if _ % 10 == 0:
             wandb.log({"Training Loss": train_loss.item()})
             train_eval_dict = calculate_rouge_scores(train_targets, train_preds)
-            wandb.log(train_eval_dict)
+            wandb.log({"Train Rouge Scores": train_eval_dict})
             print(f'Train Rouge scores: {train_eval_dict}')
 
         if _ % 500 == 0:
@@ -45,7 +45,11 @@ def train_model(epoch: int, tokenizer, model, device, loader: DataLoader, optimi
         optimizer.step()
 
 
-def validate_model(tokenizer, model, device, loader: DataLoader, wandb_log=True) -> Tuple[List[Any], List[Any]]:
+def validate_model(tokenizer,
+                   model,
+                   device,
+                   loader: DataLoader,
+                   wandb_log=True) -> Tuple[List[Any], List[Any], Dict[Any, Any]]:
     model.eval()
     val_preds = []
     val_targets = []
@@ -64,17 +68,6 @@ def validate_model(tokenizer, model, device, loader: DataLoader, wandb_log=True)
 
             preds = evaluate(model, tokenizer, ids, mask)
 
-            # generated_ids = model.generate(input_ids=ids,
-            #                                attention_mask=mask,
-            #                                max_length=150,
-            #                                num_beams=2,
-            #                                repetition_penalty=2.5,
-            #                                length_penalty=1.0,
-            #                                early_stopping=True
-            #                                )
-            # preds = [tokenizer.decode(g, skip_special_tokens=True,
-            #                           clean_up_tokenization_spaces=True) for g in generated_ids]
-
             target = [tokenizer.decode(t, skip_special_tokens=True,
                                        clean_up_tokenization_spaces=True) for t in y]
             val_preds.extend(preds)
@@ -82,16 +75,16 @@ def validate_model(tokenizer, model, device, loader: DataLoader, wandb_log=True)
 
             if _ % 10 == 0:
                 print(f'Completed {_}')
-                wandb.log({"Valid Loss": valid_loss.item()})
                 # Log rouge scores
                 t = time()
-                eval_dict = calculate_rouge_scores(val_targets, val_preds)
+                valid_eval_dict = calculate_rouge_scores(val_targets, val_preds)
                 if wandb_log:
-                    wandb.log(eval_dict)
+                    wandb.log({"Valid Loss": valid_loss.item()})
+                    wandb.log({"Valid Rouge Scores": valid_eval_dict})
                 time_taken = time() - t
-                print(f'Valid Rouge scores: {eval_dict} \n Time taken: {time_taken}')
+                print(f'Valid Rouge scores: {valid_eval_dict} \n Time taken: {time_taken}')
 
-    return val_preds, val_targets, eval_dict
+    return val_preds, val_targets, valid_eval_dict
 
 
 def evaluate(model, tokenizer, ids, mask=None):
