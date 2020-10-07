@@ -8,11 +8,10 @@ import pandas as pd
 import numpy as np
 import pickle
 import torch
-from torch import cuda
 from pathlib import Path
 from yacs.config import CfgNode
 
-from .engine import train_model, validate_model
+from .engine import train_model, evaluate
 from .data.news_dataset import build_news_loader
 from .configs.yacs_configs import get_cfg_defaults, cfg_to_dict
 from .models.build_model import build_model
@@ -50,8 +49,8 @@ def main(cfg: CfgNode):
     print('Initiating Fine-Tuning for the model on our dataset')
 
     for epoch in range(cfg.TRAINING.TRAIN_EPOCHS):
-        train_model(epoch, tokenizer, model, device, train_loader, optimizer)  # type: ignore
-        predictions, actuals, eval_dict = validate_model(tokenizer, model, device, val_loader)  # type: ignore
+        train_model(epoch, tokenizer, model, cfg.MODEL.DEVICE, train_loader, optimizer)  # type: ignore
+        predictions, actuals, eval_dict = evaluate(tokenizer, model, cfg.MODEL.DEVICE, val_loader)  # type: ignore
 
     # Save model weights
     print(f"Saving the model {epoch}")

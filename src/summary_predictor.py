@@ -10,7 +10,7 @@ class SummaryPredictor:
         self.cfg = cfg
         self.model, self.tokenizer = build_model(self.cfg)
 
-    def predict(self, text, cfg):
+    def __call__(self, text, cfg):
         """
         Summarize on a single text
         """

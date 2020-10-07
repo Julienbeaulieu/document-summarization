@@ -22,12 +22,12 @@ YACS:
 
 Running `tasks/lint.sh` fully lints our codebase with a few different checkers:
 
-`pipenv check` scans our Python package dependency graph for known security vulnerabilities
-`pylint` does static analysis of Python files and reports both style and bug problems
-`pycodestyle` checks for simple code style guideline violations (somewhat overlapping with pylint)
-`mypy` performs static type checking of Python files
-`bandit` performs static analysis to find common security vulnerabilities in Python code
-`shellcheck` finds bugs and potential bugs in shell scrips
+- `pipenv check` scans our Python package dependency graph for known security vulnerabilities
+- `pylint` does static analysis of Python files and reports both style and bug problems
+- `pycodestyle` checks for simple code style guideline violations (somewhat overlapping with pylint)
+- `mypy` performs static type checking of Python files
+- `bandit` performs static analysis to find common security vulnerabilities in Python code
+- `shellcheck` finds bugs and potential bugs in shell scrips
 
 ## Testing & Continuous Integration with CircleCI
 

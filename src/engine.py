@@ -4,8 +4,7 @@ import wandb
 from time import time
 from torch.utils.data import DataLoader
 from typing import List, Tuple, Any, Dict
-
-from .utils import calculate_rouge_scores
+from rouge_score import rouge_scorer
 
 
 def train_model(epoch: int, tokenizer, model, device, loader: DataLoader, optimizer):
@@ -13,27 +12,25 @@ def train_model(epoch: int, tokenizer, model, device, loader: DataLoader, optimi
     train_preds = []
     train_targets = []
     for _, data in enumerate(loader, 0):
-        y = data['target_ids'].to(device, dtype=torch.long)
-        y_ids = y[:, :-1].contiguous()
-        lm_labels = y[:, 1:].clone().detach()
-        lm_labels[y[:, 1:] == tokenizer.pad_token_id] = -100
-        ids = data['source_ids'].to(device, dtype=torch.long)
-        mask = data['source_mask'].to(device, dtype=torch.long)
+        inputs = prepare_inputs(data, tokenizer, device)
 
-        outputs = model(input_ids=ids, attention_mask=mask, decoder_input_ids=y_ids,
-                        lm_labels=lm_labels)
+        outputs = model(input_ids=inputs['ids'],
+                        attention_mask=inputs['mask'],
+                        decoder_input_ids=inputs['y_ids'],
+                        lm_labels=inputs['lm_labels'])
+
         train_loss = outputs[0]
 
-        preds = evaluate(model, tokenizer, ids, mask)
-        target = [tokenizer.decode(t, skip_special_tokens=True,
-                                   clean_up_tokenization_spaces=True) for t in y]
+        preds = predict_batch(model, tokenizer, inputs['ids'], inputs['mask'])
+        targets = [tokenizer.decode(t, skip_special_tokens=True,
+                                    clean_up_tokenization_spaces=True) for t in inputs['y']]
 
         train_preds.extend(preds)
-        train_targets.extend(target)
+        train_targets.extend(targets)
 
         if _ % 10 == 0:
             wandb.log({"Training Loss": train_loss.item()})
-            train_eval_dict = calculate_rouge_scores(train_targets, train_preds)
+            train_eval_dict = evaluate_on_rouge_scores(train_targets, train_preds)
             wandb.log({"Train Rouge Scores": train_eval_dict})
             print(f'Train Rouge scores: {train_eval_dict}')
 
@@ -45,49 +42,63 @@ def train_model(epoch: int, tokenizer, model, device, loader: DataLoader, optimi
         optimizer.step()
 
 
-def validate_model(tokenizer,
-                   model,
-                   device,
-                   loader: DataLoader,
-                   wandb_log=True) -> Tuple[List[Any], List[Any], Dict[Any, Any]]:
+def evaluate(tokenizer,
+             model,
+             device,
+             loader: DataLoader,
+             wandb_log=True,
+             eval_type="train") -> Tuple[List[Any], List[Any], Dict[Any, Any]]:
     model.eval()
-    val_preds = []
-    val_targets = []
+    preds = []
+    targets = []
     with torch.no_grad():
         for _, data in enumerate(loader, 0):
-            y = data['target_ids'].to(device, dtype=torch.long)
-            y_ids = y[:, :-1].contiguous()
-            ids = data['source_ids'].to(device, dtype=torch.long)
-            lm_labels = y[:, 1:].clone().detach()
-            lm_labels[y[:, 1:] == tokenizer.pad_token_id] = -100
-            mask = data['source_mask'].to(device, dtype=torch.long)
+            inputs = prepare_inputs(data, tokenizer, device)
 
-            outputs = model(input_ids=ids, attention_mask=mask, decoder_input_ids=y_ids,
-                            lm_labels=lm_labels)
-            valid_loss = outputs[0]
+            outputs = model(input_ids=inputs['ids'],
+                            attention_mask=inputs['mask'],
+                            decoder_input_ids=inputs['y_ids'],
+                            lm_labels=inputs['lm_labels'])
 
-            preds = evaluate(model, tokenizer, ids, mask)
+            loss = outputs[0]
 
-            target = [tokenizer.decode(t, skip_special_tokens=True,
-                                       clean_up_tokenization_spaces=True) for t in y]
-            val_preds.extend(preds)
-            val_targets.extend(target)
+            batch_preds = predict_batch(model, tokenizer, inputs['ids'], inputs['mask'])
+
+            batch_targets = [tokenizer.decode(t, skip_special_tokens=True,
+                             clean_up_tokenization_spaces=True) for t in inputs['y']]
+            preds.extend(batch_preds)
+            targets.extend(batch_targets)
 
             if _ % 10 == 0:
                 print(f'Completed {_}')
                 # Log rouge scores
                 t = time()
-                valid_eval_dict = calculate_rouge_scores(val_targets, val_preds)
+                eval_dict = evaluate_on_rouge_scores(targets, preds)
                 if wandb_log:
-                    wandb.log({"Valid Loss": valid_loss.item()})
-                    wandb.log({"Valid Rouge Scores": valid_eval_dict})
+                    wandb.log({"Valid Loss": loss.item()})
+                    wandb.log({"Valid Rouge Scores": eval_dict})
                 time_taken = time() - t
-                print(f'Valid Rouge scores: {valid_eval_dict} \n Time taken: {time_taken}')
+                print(f'Valid Rouge scores: {eval_dict} \n Time taken: {time_taken}')
 
-    return val_preds, val_targets, valid_eval_dict
+    return preds, targets, eval_dict
 
 
-def evaluate(model, tokenizer, ids, mask=None):
+def prepare_inputs(inputs, tokenizer, device):
+    y = inputs['target_ids'].to(device, dtype=torch.long)
+    y_ids = y[:, :-1].contiguous()
+    lm_labels = y[:, 1:].clone().detach()
+    lm_labels[y[:, 1:] == tokenizer.pad_token_id] = -100
+    ids = inputs['source_ids'].to(device, dtype=torch.long)
+    mask = inputs['source_mask'].to(device, dtype=torch.long)
+
+    return {'y': y,
+            'y_ids': y_ids,
+            'lm_labels': lm_labels,
+            'ids': ids,
+            'mask': mask}
+
+
+def predict_batch(model, tokenizer, ids, mask=None):
     generated_ids = model.generate(input_ids=ids,
                                    attention_mask=mask,
                                    max_length=150,
@@ -99,3 +110,29 @@ def evaluate(model, tokenizer, ids, mask=None):
 
     return [tokenizer.decode(g, skip_special_tokens=True,
                              clean_up_tokenization_spaces=True) for g in generated_ids]
+
+
+def evaluate_on_rouge_scores(targets: List, preds: List) -> Dict:
+
+    scorer = rouge_scorer.RougeScorer(['rouge1', 'rouge2', 'rougeL'], use_stemmer=True)
+    scores = [scorer.score(target, pred) for target, pred in zip(targets, preds)]
+
+    rouge1_f1, rouge2_f1, rougeL_f1 = 0.0, 0.0, 0.0
+
+    # TODO: Very ugly - refactor needed
+    for score in scores:
+        for k, v in score.items():
+            if k == 'rouge1':
+                rouge1_f1 += v.fmeasure
+            if k == 'rouge2':
+                rouge2_f1 += v.fmeasure
+            if k == 'rougeL':
+                rougeL_f1 += v.fmeasure
+
+    eval_dict = {
+        'rouge1': rouge1_f1 / len(scores),
+        'rouge2': rouge2_f1 / len(scores),
+        'rougeL': rougeL_f1 / len(scores)
+    }
+
+    return eval_dict
