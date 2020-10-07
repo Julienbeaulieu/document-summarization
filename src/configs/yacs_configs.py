@@ -30,6 +30,14 @@ __C.MODEL.PRETRAINED = 't5-base'
 __C.MODEL.TOK_PRETRAINED = 't5-base'
 __C.MODEL.DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
+# T5 Configs
+__C.MODEL.T5 = ConfigurationNode()
+__C.MODEL.T5.MAX_LENGTH = 150
+__C.MODEL.T5.NUM_BEAMS = 3
+__C.MODEL.T5.REPETITION_PENALTY = 2.5
+__C.MODEL.T5.LENGTH_PENALTY = 1.0
+__C.MODEL.T5.EARLY_STOPPING = True
+
 __C.PATH = ConfigurationNode()
 __C.PATH.STATE_FPATH = os.path.join(weights_path, f'model_{__C.TRAINING.TRAIN_EPOCHS}_epochs')
 

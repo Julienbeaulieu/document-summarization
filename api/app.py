@@ -1,6 +1,8 @@
 import os
 from flask import Flask, request, jsonify
-from transformers import T5Tokenizer, T5ForConditionalGeneration
+
+from ..src.summary_predictor import SummaryPredictor
+from ..src.configs.yacs_configs import get_cfg_defaults, add_pretrained
 
 
 os.environ["CUDA_VISIBLE_DEVICES"] = ""  # Do  not use GPU
@@ -17,22 +19,14 @@ def index():
 @app.route("/v1/predict", methods=["GET", "POST"])
 def predict():
     """Provide main prediction API route. Responds to both GET and POST requests."""
+
     text = request.args.get("text")
 
-    tokenizer = T5Tokenizer.from_pretrained('t5-small')
-    model = T5ForConditionalGeneration.from_pretrained('/home/julien/data-science/nlp-project/weights/model_1_epochs',
-                                                       return_dict=True)
-    input_ids = tokenizer.encode(text, return_tensors="pt")  # Batch size 1
-    outputs = model.generate(input_ids,
-                             max_length=150,
-                             num_beams=3,
-                             repetition_penalty=2.5,
-                             length_penalty=1.0,
-                             early_stopping=True)
+    cfg = get_cfg_defaults()
+    add_pretrained(cfg)
 
-    pred = [tokenizer.decode(g,
-                             skip_special_tokens=True,
-                             clean_up_tokenization_spaces=True) for g in outputs][0]
+    predictor = SummaryPredictor(cfg.MODEL)
+    pred = predictor.predict(text)
 
     return jsonify({'pred': str(pred)})
 
