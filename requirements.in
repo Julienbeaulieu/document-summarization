@@ -9,6 +9,7 @@ pycodestyle
 pytest
 rouge-score
 safety
+streamlit
 tensorboard
 torch
 transformers

@@ -3,6 +3,7 @@ numpy
 pandas
 pytest
 rouge-score
+streamlit
 torch
 transformers
 wandb
