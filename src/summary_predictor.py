@@ -20,10 +20,10 @@ class SummaryPredictor:
         output = self.model.generate(input_ids,
                                      max_length=cfg.MAX_LENGTH,
                                      num_beams=cfg.NUM_BEAMS,
-                                     repetition_penalty=cfg.REPITITION_PENALTY,
+                                     repetition_penalty=cfg.REPETITION_PENALTY,
                                      length_penalty=cfg.LENGTH_PENALTY,
                                      early_stopping=cfg.EARLY_STOPPING)
 
-        return self.tokenizer.decode(output,
+        return [self.tokenizer.decode(g,
                                      skip_special_tokens=True,
-                                     clean_up_tokenization_spaces=True)
+                                     clean_up_tokenization_spaces=True) for g in output][0]

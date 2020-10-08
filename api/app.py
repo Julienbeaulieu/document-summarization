@@ -26,7 +26,7 @@ def predict():
     add_pretrained(cfg)
 
     predictor = SummaryPredictor(cfg.MODEL)
-    pred = predictor(text)
+    pred = predictor(text, cfg)
 
     return jsonify({'pred': str(pred)})
 
