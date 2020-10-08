@@ -25,5 +25,5 @@ class SummaryPredictor:
                                      early_stopping=cfg.EARLY_STOPPING)
 
         return [self.tokenizer.decode(g,
-                                     skip_special_tokens=True,
-                                     clean_up_tokenization_spaces=True) for g in output][0]
+                                      skip_special_tokens=True,
+                                      clean_up_tokenization_spaces=True) for g in output][0]

@@ -14,13 +14,13 @@ from src.configs.yacs_configs import get_cfg_defaults, add_pretrained
 st.header("Text Summarization")
 
 st.markdown('''
-This is a demo showcasing a summarization model fine tuned on a news dataset. 
+This is a demo showcasing a summarization model fine tuned on a news dataset.
 ''')
 
 text = st.text_input(label='Enter a text to translate.', value='')
 
 cfg = get_cfg_defaults()
-# add_pretrained(cfg)
+add_pretrained(cfg)
 
 predictor = SummaryPredictor(cfg.MODEL)
 

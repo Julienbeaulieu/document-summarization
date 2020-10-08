@@ -85,6 +85,7 @@ target/
 /notebooks/wandb*
 /output
 project-plan.md 
+document_summarization_notes.md
 
 
 # Mac OS-specific storage files

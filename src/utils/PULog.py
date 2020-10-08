@@ -29,7 +29,7 @@ handler_file_out = logging.FileHandler(
 )
 
 formatter = logging.Formatter(
-    "[%(asctime)s]\t\t\t\t[%(levelname)s]\t\t\t\t[%(filename)s,%(module)s,%(funcName)s():\t\t\t\tLine %(lineno)i]:\t\t\t\t%(message)s"
+    "[%(asctime)s]\n[%(levelname)s]\t\t\t\t[%(filename)s,%(module)s,%(funcName)s():\t\t\t\tLine %(lineno)i]:\t\t\t\t%(message)s"
 )
 
 # Add the formatter to the handler
