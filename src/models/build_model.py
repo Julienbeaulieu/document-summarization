@@ -1,7 +1,7 @@
 import torch
 from yacs.config import CfgNode
 from torch import nn
-from ..utils import Registry
+from ..utils.registry import Registry
 
 MODEL_ARCH_REGISTRY = Registry()
 

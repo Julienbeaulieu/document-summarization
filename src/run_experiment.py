@@ -15,9 +15,10 @@ from .engine import train_model, evaluate
 from .data.news_dataset import build_news_loader
 from .configs.yacs_configs import get_cfg_defaults, cfg_to_dict
 from .models.build_model import build_model
+from .envpath import AllPaths
 
-# TODO: Create env file and use Environs library to handle local vars
-data_path = Path('/home/nasty/document-summarization/dataset/processed')
+# Get the dataset/raw path from AllPaths class
+data_path = AllPaths.processed
 
 
 def main(cfg: CfgNode):
