@@ -18,14 +18,14 @@ black==20.8b1             # via -r requirements.in
 bleach==3.2.1             # via nbconvert
 blessings==1.7            # via gpustat
 blinker==1.4              # via streamlit
-boto3==1.15.14            # via streamlit
-botocore==1.18.14         # via boto3, s3transfer, streamlit
+boto3==1.15.16            # via streamlit
+botocore==1.18.16         # via boto3, s3transfer, streamlit
 cachetools==4.1.1         # via google-auth, streamlit
 certifi==2020.6.20        # via matplotlib, requests, sentry-sdk
 cffi==1.14.3              # via argon2-cffi
 chardet==3.0.4            # via requests
-click==7.1.2              # via black, nltk, sacremoses, safety, streamlit, wandb
-configparser==5.0.0       # via wandb
+click==7.1.2              # via black, flask, nltk, sacremoses, safety, streamlit, wandb
+configparser==5.0.1       # via wandb
 cycler==0.10.0            # via matplotlib
 decorator==4.4.2          # via ipython, validators
 defusedxml==0.6.0         # via nbconvert
@@ -33,8 +33,10 @@ docker-pycreds==0.4.0     # via wandb
 dparse==0.5.1             # via safety
 entrypoints==0.3          # via altair, nbconvert
 enum-compat==0.0.3        # via streamlit
+environs==8.0.0           # via -r requirements.in
 filelock==3.0.12          # via transformers
 flake8==3.8.4             # via -r requirements.in
+flask==1.1.2              # via -r requirements.in
 future==0.18.2            # via torch
 gitdb==4.0.5              # via gitpython
 gitpython==3.1.9          # via bandit, wandb
@@ -48,8 +50,9 @@ ipykernel==5.3.4          # via -r requirements.in, ipywidgets, notebook, pydeck
 ipython-genutils==0.2.0   # via nbformat, notebook, traitlets
 ipython==7.18.1           # via ipykernel, ipywidgets
 ipywidgets==7.5.1         # via -r requirements.in, pydeck
+itsdangerous==1.1.0       # via flask
 jedi==0.17.2              # via ipython
-jinja2==2.11.2            # via altair, nbconvert, notebook, pydeck
+jinja2==2.11.2            # via altair, flask, nbconvert, notebook, pydeck
 jmespath==0.10.0          # via boto3, botocore
 joblib==0.17.0            # via nltk, sacremoses
 jsonschema==3.2.0         # via altair, nbformat
@@ -59,11 +62,12 @@ jupyterlab-pygments==0.1.2  # via nbconvert
 kiwisolver==1.2.0         # via matplotlib
 markdown==3.3             # via tensorboard
 markupsafe==1.1.1         # via jinja2
+marshmallow==3.8.0        # via environs
 matplotlib==3.3.2         # via -r requirements.in
 mccabe==0.6.1             # via flake8
 mistune==0.8.4            # via nbconvert
 mypy-extensions==0.4.3    # via black, mypy
-mypy==0.782               # via -r requirements.in
+mypy==0.790               # via -r requirements.in
 nbclient==0.5.0           # via nbconvert
 nbconvert==6.0.7          # via notebook
 nbformat==5.0.7           # via ipywidgets, nbclient, nbconvert, notebook
@@ -103,6 +107,7 @@ pyparsing==2.4.7          # via matplotlib, packaging
 pyrsistent==0.17.3        # via jsonschema
 pytest==6.1.1             # via -r requirements.in
 python-dateutil==2.8.1    # via botocore, jupyter-client, matplotlib, pandas, streamlit, wandb
+python-dotenv==0.14.0     # via environs
 pytz==2020.1              # via pandas, tzlocal
 pyyaml==5.3.1             # via -r requirements.in, bandit, dparse, wandb, yacs
 pyzmq==19.0.2             # via jupyter-client, notebook
@@ -122,7 +127,7 @@ shortuuid==1.0.1          # via wandb
 six==1.15.0               # via absl-py, argon2-cffi, bandit, bleach, blessings, cycler, docker-pycreds, google-auth, gpustat, grpcio, jsonschema, packaging, promise, protobuf, python-dateutil, rouge-score, sacremoses, tensorboard, validators, wandb
 smmap==3.0.4              # via gitdb
 stevedore==3.2.2          # via bandit
-streamlit==0.67.1         # via -r requirements.in
+streamlit==0.68.0         # via -r requirements.in
 subprocess32==3.5.4       # via wandb
 tensorboard-plugin-wit==1.7.0  # via tensorboard
 tensorboard==2.3.0        # via -r requirements.in
@@ -133,7 +138,7 @@ toml==0.10.1              # via black, dparse, pytest, streamlit
 toolz==0.11.1             # via altair
 torch==1.6.0              # via -r requirements.in
 tornado==6.0.4            # via ipykernel, jupyter-client, notebook, streamlit, terminado
-tqdm==4.50.1              # via nltk, sacremoses, transformers
+tqdm==4.50.2              # via nltk, sacremoses, transformers
 traitlets==5.0.4          # via ipykernel, ipython, ipywidgets, jupyter-client, jupyter-core, nbclient, nbconvert, nbformat, notebook, pydeck
 transformers==3.3.1       # via -r requirements.in
 typed-ast==1.4.1          # via black, mypy
@@ -145,7 +150,7 @@ wandb==0.10.5             # via -r requirements.in
 watchdog==0.10.3          # via streamlit, wandb
 wcwidth==0.2.5            # via prompt-toolkit
 webencodings==0.5.1       # via bleach
-werkzeug==1.0.1           # via tensorboard
+werkzeug==1.0.1           # via flask, tensorboard
 wheel==0.35.1             # via tensorboard
 widgetsnbextension==3.5.1  # via ipywidgets
 yacs==0.1.8               # via -r requirements.in

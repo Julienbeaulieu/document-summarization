@@ -24,7 +24,7 @@ cachetools==4.1.1         # via streamlit
 certifi==2020.6.20        # via matplotlib, requests, sentry-sdk
 cffi==1.14.3              # via argon2-cffi
 chardet==3.0.4            # via requests
-click==7.1.2              # via black, nltk, sacremoses, safety, streamlit, wandb
+click==7.1.2              # via black, flask, nltk, sacremoses, safety, streamlit, wandb
 configparser==5.0.0       # via wandb
 cycler==0.10.0            # via matplotlib
 decorator==4.4.2          # via ipython, validators
@@ -33,8 +33,10 @@ docker-pycreds==0.4.0     # via wandb
 dparse==0.5.1             # via safety
 entrypoints==0.3          # via altair, nbconvert
 enum-compat==0.0.3        # via streamlit
+environs==8.0.0           # via -r requirements-dev.in
 filelock==3.0.12          # via transformers
 flake8==3.8.4             # via -r requirements-dev.in
+flask==1.1.2              # via -r requirements-dev.in
 future==0.18.2            # via torch
 gitdb==4.0.5              # via gitpython
 gitpython==3.1.9          # via bandit, wandb
@@ -45,8 +47,9 @@ ipykernel==5.3.4          # via ipywidgets, notebook, pydeck
 ipython-genutils==0.2.0   # via nbformat, notebook, traitlets
 ipython==7.18.1           # via ipykernel, ipywidgets
 ipywidgets==7.5.1         # via pydeck
+itsdangerous==1.1.0       # via flask
 jedi==0.17.2              # via ipython
-jinja2==2.11.2            # via altair, jupyterlab, jupyterlab-server, nbconvert, notebook, pydeck
+jinja2==2.11.2            # via altair, flask, jupyterlab, jupyterlab-server, nbconvert, notebook, pydeck
 jmespath==0.10.0          # via boto3, botocore
 joblib==0.17.0            # via nltk, sacremoses
 json5==0.9.5              # via jupyterlab-server
@@ -58,6 +61,7 @@ jupyterlab-server==1.2.0  # via jupyterlab
 jupyterlab==2.2.8         # via -r requirements-dev.in
 kiwisolver==1.2.0         # via matplotlib
 markupsafe==1.1.1         # via jinja2
+marshmallow==3.8.0        # via environs
 matplotlib==3.3.2         # via -r requirements-dev.in
 mccabe==0.6.1             # via flake8
 mistune==0.8.4            # via nbconvert
@@ -100,6 +104,7 @@ pyparsing==2.4.7          # via matplotlib, packaging
 pyrsistent==0.17.3        # via jsonschema
 pytest==6.1.1             # via -r requirements-dev.in
 python-dateutil==2.8.1    # via botocore, jupyter-client, matplotlib, pandas, streamlit, wandb
+python-dotenv==0.14.0     # via environs
 pytz==2020.1              # via pandas, tzlocal
 pyyaml==5.3.1             # via -r requirements-dev.in, bandit, dparse, wandb, yacs
 pyzmq==19.0.2             # via jupyter-client, notebook
@@ -139,6 +144,7 @@ wandb==0.10.4             # via -r requirements-dev.in
 watchdog==0.10.3          # via streamlit, wandb
 wcwidth==0.2.5            # via prompt-toolkit
 webencodings==0.5.1       # via bleach
+werkzeug==1.0.1           # via flask
 widgetsnbextension==3.5.1  # via ipywidgets
 yacs==0.1.8               # via -r requirements-dev.in
 

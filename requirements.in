@@ -1,6 +1,8 @@
 bandit
 black
+environs
 flake8
+flask
 gpustat
 ipykernel
 ipywidgets

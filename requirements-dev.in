@@ -1,6 +1,8 @@
 bandit
 black
 gpustat
+environs
+flask
 jupyterlab
 matplotlib
 mypy
