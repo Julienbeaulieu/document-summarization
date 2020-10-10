@@ -1,11 +1,12 @@
 import os
 import yacs
 import torch
-
 from yacs.config import CfgNode as ConfigurationNode
-from pathlib import Path
 
-weights_path = Path('/home/nasty/document-summarization/weights')
+from ..envpath import AllPaths
+
+# Get the dataset/raw path from AllPaths class
+weights_path = AllPaths.trained_weights
 
 # YACS overwrite these settings using YAML, all YAML variables MUST BE defined here first
 # as this is the master list of ALL attributes.

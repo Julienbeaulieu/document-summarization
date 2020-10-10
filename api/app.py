@@ -1,9 +1,10 @@
 import os
 from flask import Flask, request, jsonify
 
-from ..src.summary_predictor import SummaryPredictor
-from ..src.configs.yacs_configs import get_cfg_defaults, add_pretrained
+from src.summary_predictor import SummaryPredictor
+from src.configs.yacs_configs import get_cfg_defaults, add_pretrained
 
+# Run: cd api | python -m flask run
 
 os.environ["CUDA_VISIBLE_DEVICES"] = ""  # Do  not use GPU
 
@@ -20,15 +21,23 @@ def index():
 def predict():
     """Provide main prediction API route. Responds to both GET and POST requests."""
 
-    text = request.args.get("text")
+    text = str(load_text())
 
     cfg = get_cfg_defaults()
     add_pretrained(cfg)
 
     predictor = SummaryPredictor(cfg.MODEL)
-    pred = predictor(text)
+    pred = predictor(text, cfg.MODEL.T5)
 
     return jsonify({'pred': str(pred)})
+
+
+def load_text():
+    if request.method == "POST":
+        return request.data
+    if request.method == "GET":
+        print(request.args.get("text"))
+        return request.args.get("text")
 
 
 def main():

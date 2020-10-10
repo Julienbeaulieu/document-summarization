@@ -7,6 +7,7 @@ from typing import List, Tuple, Any, Dict
 from rouge_score import rouge_scorer
 
 
+# Fine tune model
 def train_model(epoch: int, tokenizer, model, device, loader: DataLoader, optimizer):
     model.train()
     train_preds = []
