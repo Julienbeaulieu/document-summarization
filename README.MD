@@ -1,6 +1,8 @@
-# Text Summarization App
+# New York Times Article Summarization App
 
-Goal of this V1: Deploy app that will summarize input text. Model is fine tuned on a news dataset so that it is specialized to summarize news articles.  
+V1: Summarizes articles found on the front page of The New York Times. Model is fine tuned on a news dataset so that it is specialized to summarize news articles. App hosted on streamlit and Flask.
+
+NYT api is used to fetch article URLs which are then scraped using BeautifulSoup.
 
 ## Data
 
@@ -10,12 +12,14 @@ Goal of this V1: Deploy app that will summarize input text. Model is fine tuned 
 ## Experiment Management with Weights and Biases + YACS
 
 W & B:
+
 - Keep track of all experiments in one place
 - Easily compare runs
 - Run multiple experiments
 - Run sweeps: automated trials of hyper-parameters
 
-YACS: 
+YACS:
+
 - Configuration of hyperparameters and model hyperparameters
 
 ## Linting Script
@@ -35,6 +39,7 @@ Running `evaluation_tests/evaluate_news_summary.py` evaluates the trained predic
 
 Pushing a commit will build the jobs in `.circleci/config.yml`.
 
-## Run model with Flask api
+## Run model with Streamlit & Flask api
 
-Run `api/app.py` to run a summarization prediction on input text. 
+- Run `streamlit run streamlit.py` to launch a local session of a webapp that summarizes articles found on The New York Times.
+- Run `api/app.py` to run a summarization prediction on a given input text. Can also be run with Docker.

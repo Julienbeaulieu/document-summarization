@@ -62,4 +62,4 @@ def cfg_to_dict(cfg):
 
 
 def add_pretrained(cfg):
-    __C.MODEL.PRETRAINED = '/home/julien/data-science/nlp-project/weights/model_1_epochs'
+    __C.MODEL.PRETRAINED = 'C:/Users/nasty/data-science/document_summarization/src/weights/model_1_epochs'
