@@ -26,18 +26,23 @@ __C.TRAINING.MAX_LEN = 512
 __C.TRAINING.SUMMARY_LEN = 150
 
 __C.MODEL = ConfigurationNode()
-__C.MODEL.MODEL_ARCH = 't5'
-__C.MODEL.PRETRAINED = 't5-base'
-__C.MODEL.TOK_PRETRAINED = 't5-base'
+__C.MODEL.MODEL_ARCH = 'bart'
 __C.MODEL.DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
+__C.MODEL.MAX_LENGTH = 150
+__C.MODEL.NUM_BEAMS = 3
+__C.MODEL.REPETITION_PENALTY = 2.5
+__C.MODEL.LENGTH_PENALTY = 1.0
+__C.MODEL.EARLY_STOPPING = True
 
 # T5 Configs
 __C.MODEL.T5 = ConfigurationNode()
-__C.MODEL.T5.MAX_LENGTH = 150
-__C.MODEL.T5.NUM_BEAMS = 3
-__C.MODEL.T5.REPETITION_PENALTY = 2.5
-__C.MODEL.T5.LENGTH_PENALTY = 1.0
-__C.MODEL.T5.EARLY_STOPPING = True
+__C.MODEL.T5.PRETRAINED = 't5-base'
+__C.MODEL.T5.TOK_PRETRAINED = 't5-base'
+
+# BART Configs
+__C.MODEL.BART = ConfigurationNode()
+__C.MODEL.BART.PRETRAINED = 'facebook/bart-large-cnn'
+__C.MODEL.BART.TOK_PRETRAINED = 'facebook/bart-large-cnn'
 
 __C.PATH = ConfigurationNode()
 __C.PATH.STATE_FPATH = os.path.join(weights_path, f'model_{__C.TRAINING.TRAIN_EPOCHS}_epochs')

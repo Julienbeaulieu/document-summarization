@@ -8,7 +8,7 @@ from rouge_score import rouge_scorer
 
 
 # Fine tune model
-def train_model(epoch: int, tokenizer, model, device, loader: DataLoader, optimizer):
+def train_model(cfg, epoch: int, tokenizer, model, device, loader: DataLoader, optimizer):
     model.train()
     train_preds = []
     train_targets = []
@@ -22,7 +22,7 @@ def train_model(epoch: int, tokenizer, model, device, loader: DataLoader, optimi
 
         train_loss = outputs[0]
 
-        preds = predict_batch(model, tokenizer, inputs['ids'], inputs['mask'])
+        preds = predict_batch(cfg, model, tokenizer, inputs['ids'], inputs['mask'])
         targets = [tokenizer.decode(t, skip_special_tokens=True,
                                     clean_up_tokenization_spaces=True) for t in inputs['y']]
 
@@ -43,7 +43,7 @@ def train_model(epoch: int, tokenizer, model, device, loader: DataLoader, optimi
         optimizer.step()
 
 
-def evaluate(tokenizer,
+def evaluate(cfg, tokenizer,
              model,
              device,
              loader: DataLoader,
@@ -99,14 +99,14 @@ def prepare_inputs(inputs, tokenizer, device):
             'mask': mask}
 
 
-def predict_batch(model, tokenizer, ids, mask=None):
+def predict_batch(cfg, model, tokenizer, ids, mask=None):
     generated_ids = model.generate(input_ids=ids,
                                    attention_mask=mask,
-                                   max_length=150,
-                                   num_beams=2,
-                                   repetition_penalty=2.5,
-                                   length_penalty=1.0,
-                                   early_stopping=True
+                                   max_length=cfg.MAX_LENGTH,
+                                   num_beams=cfg.NUM_BEAMS,
+                                   repetition_penalty=cfg.REPETITION_PENALTY,
+                                   length_penalty=cfg.LENGTH_PENALTY,
+                                   early_stopping=cfg.EARLY_STOPPING
                                    )
 
     return [tokenizer.decode(g, skip_special_tokens=True,

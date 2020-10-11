@@ -8,7 +8,6 @@ import pandas as pd
 import numpy as np
 import pickle
 import torch
-from pathlib import Path
 from yacs.config import CfgNode
 
 from .engine import train_model, evaluate
@@ -50,8 +49,8 @@ def main(cfg: CfgNode):
     print('Initiating Fine-Tuning for the model on our dataset')
 
     for epoch in range(cfg.TRAINING.TRAIN_EPOCHS):
-        train_model(epoch, tokenizer, model, cfg.MODEL.DEVICE, train_loader, optimizer)  # type: ignore
-        predictions, actuals, eval_dict = evaluate(tokenizer, model, cfg.MODEL.DEVICE, val_loader)  # type: ignore
+        train_model(cfg.MODEL, epoch, tokenizer, model, cfg.MODEL.DEVICE, train_loader, optimizer)  # type: ignore
+        predictions, actuals, eval_dict = evaluate(cfg.MODEL, tokenizer, model, cfg.MODEL.DEVICE, val_loader)  # type: ignore
 
     # Save model weights
     print(f"Saving the model {epoch}")

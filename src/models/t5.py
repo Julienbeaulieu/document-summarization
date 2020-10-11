@@ -14,5 +14,5 @@ def build_t5_model(model_cfg: CfgNode) -> Tuple[nn.Module, transformers.tokeniza
     :param model_cfg: YAML based YACS config node
     :return: return torch neural network module
     """
-    return (T5ForConditionalGeneration.from_pretrained(model_cfg.PRETRAINED),
-            T5Tokenizer.from_pretrained(model_cfg.TOK_PRETRAINED))
+    return (T5ForConditionalGeneration.from_pretrained(model_cfg.T5.PRETRAINED),
+            T5Tokenizer.from_pretrained(model_cfg.T5.TOK_PRETRAINED))

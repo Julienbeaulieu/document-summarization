@@ -27,7 +27,7 @@ def get_summary(title):
     text = df.loc[df.title == title].article_text.values
 
     # Make sure article length
-    max_len = min(len(text[0]), 10000)
+    max_len = min(len(text[0]), 1024)
     text = text[0][:max_len]
 
     return text
@@ -64,8 +64,8 @@ if topic != '<select>':
             text = get_summary(title)
 
             cfg = get_cfg_defaults()
-            add_pretrained(cfg)
+            #add_pretrained(cfg)
 
             predictor = SummaryPredictor(cfg.MODEL)
 
-            st.write(f'Summary: {predictor(text, cfg.MODEL.T5)}')
+            st.write(f'**Summary**: {predictor(text, cfg.MODEL)}')
