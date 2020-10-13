@@ -3,7 +3,7 @@ import api.SessionState as SessionState
 import streamlit as st
 
 from src.summary_predictor import SummaryPredictor
-from src.configs.yacs_configs import get_cfg_defaults, add_pretrained
+from src.configs.yacs_configs import get_cfg_defaults  # , add_pretrained
 from api.new_york_times_api import get_data, add_text_columns
 
 os.environ["CUDA_VISIBLE_DEVICES"] = ""  # Do  not use GPU
@@ -64,7 +64,8 @@ if topic != '<select>':
             text = get_summary(title)
 
             cfg = get_cfg_defaults()
-            #add_pretrained(cfg)
+            cfg.MODEL.DEVICE = 'cpu'
+            #  add_pretrained(cfg)
 
             predictor = SummaryPredictor(cfg.MODEL)
 

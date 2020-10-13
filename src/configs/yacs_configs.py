@@ -41,8 +41,8 @@ __C.MODEL.T5.TOK_PRETRAINED = 't5-base'
 
 # BART Configs
 __C.MODEL.BART = ConfigurationNode()
-__C.MODEL.BART.PRETRAINED = 'facebook/bart-large-cnn'
-__C.MODEL.BART.TOK_PRETRAINED = 'facebook/bart-large-cnn'
+__C.MODEL.BART.PRETRAINED = 'facebook/bart-large-cnn'  # './src/weights/bart_large_cnn'
+__C.MODEL.BART.TOK_PRETRAINED = 'facebook/bart-large-cnn'  # './src/weights/bart_large_cnn'
 
 __C.PATH = ConfigurationNode()
 __C.PATH.STATE_FPATH = os.path.join(weights_path, f'model_{__C.TRAINING.TRAIN_EPOCHS}_epochs')
@@ -67,4 +67,4 @@ def cfg_to_dict(cfg):
 
 
 def add_pretrained(cfg):
-    __C.MODEL.PRETRAINED = 'C:/Users/nasty/data-science/document_summarization/src/weights/model_1_epochs'
+    __C.MODEL.PRETRAINED = weights_path

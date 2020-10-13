@@ -43,7 +43,8 @@ def train_model(cfg, epoch: int, tokenizer, model, device, loader: DataLoader, o
         optimizer.step()
 
 
-def evaluate(cfg, tokenizer,
+def evaluate(cfg,
+             tokenizer,
              model,
              device,
              loader: DataLoader,
@@ -59,11 +60,11 @@ def evaluate(cfg, tokenizer,
             outputs = model(input_ids=inputs['ids'],
                             attention_mask=inputs['mask'],
                             decoder_input_ids=inputs['y_ids'],
-                            lm_labels=inputs['lm_labels'])
+                            labels=inputs['lm_labels'])
 
             loss = outputs[0]
 
-            batch_preds = predict_batch(model, tokenizer, inputs['ids'], inputs['mask'])
+            batch_preds = predict_batch(cfg, model, tokenizer, inputs['ids'], inputs['mask'])
 
             batch_targets = [tokenizer.decode(t, skip_special_tokens=True,
                              clean_up_tokenization_spaces=True) for t in inputs['y']]

@@ -50,7 +50,12 @@ def main(cfg: CfgNode):
 
     for epoch in range(cfg.TRAINING.TRAIN_EPOCHS):
         train_model(cfg.MODEL, epoch, tokenizer, model, cfg.MODEL.DEVICE, train_loader, optimizer)  # type: ignore
-        predictions, actuals, eval_dict = evaluate(cfg.MODEL, tokenizer, model, cfg.MODEL.DEVICE, val_loader)  # type: ignore
+        predictions, actuals, eval_dict = evaluate(cfg.MODEL,
+                                                   tokenizer,
+                                                   model,
+                                                   cfg.MODEL.DEVICE,
+                                                   val_loader
+                                                   )  # type: ignore
 
     # Save model weights
     print(f"Saving the model {epoch}")
