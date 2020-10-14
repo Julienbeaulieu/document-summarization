@@ -12,6 +12,8 @@ os.environ["CUDA_VISIBLE_DEVICES"] = ""  # Do  not use GPU
 # Hack to add session state to Streamlit
 topic_session_state = SessionState.get(name="", button_sent=False)
 
+nltk.download('punkt')
+
 
 # Fetch Texts from NYT front page
 @st.cache
@@ -89,7 +91,7 @@ if topic != '<select>':
             text, url = get_summary_and_url(title)
 
             nested = nest_sentences(text)
-
+        
             if length == 'Long':
                 n = len(nested)
             if length == 'Medium':
@@ -100,10 +102,11 @@ if topic != '<select>':
             cfg = get_cfg_defaults()
             cfg.MODEL.DEVICE = 'cpu'
             device = 'cpu'
-            #  add_pretrained(cfg)
+            if len(text) < 1500:
+                cfg.MODEL.MAX_LENGTH = 200
 
             predictor = SummaryPredictor(cfg.MODEL)
-            summaries = predictor.generate_long_summary(nested[:n], device)
+            summaries = predictor.generate_long_summary(cfg.MODEL, nested[:n], device)
             summaries = str('\n\n'.join(summaries))
             st.write(f"**View original article:** {url}")
             st.write("**Summary:**")

@@ -15,4 +15,4 @@ RUN set -ex && pip3 install -r api/requirements-dev.txt
 # Run the web server locally - if using Heroku add --server.port $PORT 
 EXPOSE 8000
 ENV PYTHONPATH /repo
-CMD streamlit run /repo/api/streamlit.py 
+CMD streamlit run /repo/api/streamlit.py --server.port 8080

@@ -2,6 +2,8 @@
 
 ![](outputs/nyt-summarization-screenshot.png)
 
+**App link:** https://summarization-app.ue.r.appspot.com/
+
 ## Overview
 
 This app summarizes articles found on the front page of The New York Times. The models used are fine tuned on a news dataset which makes them better at summarizing the articles. Front end is powered by Streamlit and deployed with Docker on Heroku. The Flask app can be used to run a summary on a given text.

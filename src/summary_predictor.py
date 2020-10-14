@@ -29,7 +29,7 @@ class SummaryPredictor:
                                       skip_special_tokens=True,
                                       clean_up_tokenization_spaces=True) for g in output][0]
 
-    def generate_long_summary(self, nested_sentences, device):
+    def generate_long_summary(self, cfg, nested_sentences, device):
         '''Generate summary on text with <= 1024 tokens'''
 
         summaries = []
@@ -37,9 +37,9 @@ class SummaryPredictor:
             input_tokenized = self.tokenizer.encode(' '.join(nested), truncation=True, return_tensors='pt')
             input_tokenized = input_tokenized.to(device)
             summary_ids = self.model.to(device).generate(input_tokenized,
-                                                         length_penalty=3.0,
-                                                         min_length=30,
-                                                         max_length=100)
+                                                         length_penalty=cfg.LENGTH_PENALTY,
+                                                         min_length=80,
+                                                         max_length=cfg.MAX_LENGTH)
             output = [self.tokenizer.decode(g,
                                             skip_special_tokens=True,
                                             clean_up_tokenization_spaces=False) for g in summary_ids]
