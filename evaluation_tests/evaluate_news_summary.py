@@ -18,7 +18,6 @@ processed_data_path = AllPaths.processed
 class TestEvaluateNewsSummary(unittest.TestCase):
     def test_evaluate(self):
         cfg = get_cfg_defaults()
-        add_pretrained(cfg)
 
         model, tokenizer = build_model(cfg.MODEL)  # type: ignore
 
