@@ -86,6 +86,8 @@ target/
 /output
 project-plan.md 
 document_summarization_notes.md
+/src/weights/bart_large_cnn
+/src/weights/bart_large_cnn/*
 
 
 # Mac OS-specific storage files
@@ -116,7 +118,6 @@ models/mobilenet_v2-b0353104.pth
 submission.csv
 /depends/wheelhouse/
 .env*
-.flake8
 
 # other
 detectron2-0.1.1+cu101-cp36-cp36m-linux_x86_64.whl

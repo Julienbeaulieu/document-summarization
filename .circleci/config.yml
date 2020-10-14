@@ -5,11 +5,6 @@ jobs:
   build:
     docker:
       - image: circleci/python:3.7
-      environment:
-        path_raw = '/home/julien/data-science/document-summarization/dataset/raw'
-        path_processed = '/home/julien/data-science/document-summarization/dataset/processed' 
-        path_trained_weights = '/home/julien/data-science/document-summarization/src/weights/bart_large_cnn'
-        path_output = '/home/julien/data-science/document-summarization/dataset/output'
 
     steps:
       - checkout
@@ -53,11 +48,11 @@ jobs:
           command: |
             sh ./tasks/lint.sh
 
-      - run:
-          name: run evaluation tests
-          when: always 
-          command: |
-            sh ./tasks/run_evaluation_tests.sh
+      # - run:
+      #     name: run evaluation tests
+      #     when: always 
+      #     command: |
+      #       sh ./tasks/run_evaluation_tests.sh
 
       - store_artifacts:
           path: test-reports

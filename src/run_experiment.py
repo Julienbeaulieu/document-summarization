@@ -64,7 +64,7 @@ def main(cfg: CfgNode):
     print('Now generating summaries on our fine tuned model for the validation dataset and saving it in a dataframe')
 
     final_df = pd.DataFrame({'Generated Text': predictions, 'Actual Text': actuals})  # type: ignore
-    final_df.to_csv('./models/predictions.csv')
+    final_df.to_csv('./outputs/predictions.csv')
     print('Output Files generated for review')
 
 

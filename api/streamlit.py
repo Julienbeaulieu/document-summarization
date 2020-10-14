@@ -70,3 +70,4 @@ if topic != '<select>':
             predictor = SummaryPredictor(cfg.MODEL)
 
             st.write(f'**Summary**: {predictor(text, cfg.MODEL)}')
+

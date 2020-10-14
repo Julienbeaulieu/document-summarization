@@ -1,6 +1,6 @@
 from src.engine import evaluate
 from src.data.news_dataset import build_news_loader
-from src.configs.yacs_configs import get_cfg_defaults, add_pretrained
+from src.configs.yacs_configs import get_cfg_defaults
 from src.models.build_model import build_model
 from src.envpath import AllPaths
 
@@ -34,7 +34,8 @@ class TestEvaluateNewsSummary(unittest.TestCase):
                                                    )  # type: ignore
         time_taken = time() - t
 
-        print(f"rouge1: {eval_dict['rouge1']},rouge2: {eval_dict['rouge2']}, rougeL: {eval_dict['rougeL']}, time_taken: {time_taken}")
+        print(f"""rouge1: {eval_dict['rouge1']},rouge2: {eval_dict['rouge2']},
+              rougeL: {eval_dict['rougeL']}, time_taken: {time_taken}""")
 
         self.assertGreater(eval_dict['rouge1'], 0.25)
         self.assertGreater(eval_dict['rouge2'], 0.15)
