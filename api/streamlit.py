@@ -53,7 +53,7 @@ def nest_sentences(document):
 st.header("New York Times Article Summarization")
 
 st.markdown('''
-This is a demo showcasing SOTA summarization task on articles found in the front
+This is a demo showcasing SOTA summarization task on articles found on the front
 page of New York Times. The summarization model is fine tuned on a news dataset
 to get better summaries.
 
@@ -93,7 +93,7 @@ if topic != '<select>':
             if length == 'Long':
                 n = len(nested)
             if length == 'Medium':
-                n = len(nested)//2
+                n = len(nested) // 2
             if length == 'Short':
                 n = 1
 

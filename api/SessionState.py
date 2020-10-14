@@ -83,10 +83,10 @@ def get(**kwargs):
         if (
             # Streamlit < 0.54.0
             (hasattr(s, '_main_dg') and s._main_dg == ctx.main_dg)
-            or
+            or  # noqa: W504
             # Streamlit >= 0.54.0
             (not hasattr(s, '_main_dg') and s.enqueue == ctx.enqueue)
-            or
+            or  # noqa: W504
             # Streamlit >= 0.65.2
             (not hasattr(s, '_main_dg') and s._uploaded_file_mgr == ctx.uploaded_file_mgr)
         ):

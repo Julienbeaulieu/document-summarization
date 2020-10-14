@@ -41,25 +41,25 @@ def main(cfg: CfgNode):
     train_loader = build_news_loader(train_data, tokenizer, cfg.TRAINING, True)  # type: ignore
     val_loader = build_news_loader(valid_data, tokenizer, cfg.TRAINING, False)  # type: ignore
 
-    optimizer = torch.optim.Adam(params=model.parameters(), lr=cfg.TRAINING.LEARNING_RATE)
+    optimizer = torch.optim.Adam(params=model.parameters(), lr=cfg.TRAINING.LEARNING_RATE)  # type: ignore
 
     # Log metrics with wandb
-    wandb.watch(model, log="all")
+    wandb.watch(model, log="all")  # type: ignore
     # Training loop
     print('Initiating Fine-Tuning for the model on our dataset')
 
     for epoch in range(cfg.TRAINING.TRAIN_EPOCHS):
         train_model(cfg.MODEL, epoch, tokenizer, model, cfg.MODEL.DEVICE, train_loader, optimizer)  # type: ignore
         predictions, actuals, eval_dict = evaluate(cfg.MODEL,
-                                                   tokenizer,
-                                                   model,
+                                                   tokenizer,  # type: ignore
+                                                   model,      # type: ignore
                                                    cfg.MODEL.DEVICE,
                                                    val_loader
-                                                   )  # type: ignore
+                                                   )           # type: ignore
 
     # Save model weights
     print(f"Saving the model {epoch}")
-    model.save_pretrained(cfg.PATH.STATE_FPATH)
+    model.save_pretrained(cfg.PATH.STATE_FPATH)  # type: ignore
 
     print('Now generating summaries on our fine tuned model for the validation dataset and saving it in a dataframe')
 
