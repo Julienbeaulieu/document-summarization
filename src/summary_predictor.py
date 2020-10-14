@@ -45,5 +45,4 @@ class SummaryPredictor:
                                             clean_up_tokenization_spaces=False) for g in summary_ids]
             summaries.append(output)
         summaries = [sentence for sublist in summaries for sentence in sublist]
-        print(summaries)
         return summaries

@@ -1,4 +1,5 @@
 import os
+import nltk
 import api.SessionState as SessionState
 import streamlit as st
 
@@ -21,24 +22,46 @@ def get_text(topic):
 
 
 @st.cache
-def get_summary(title):
+def get_summary_and_url(title):
 
     # Get the text of the article based on the title that is given
-    text = df.loc[df.title == title].article_text.values
+    text = df.loc[df.title == title].article_text.values[0]
+    url = df.loc[df.title == title].url.values[0]
 
-    # Make sure article length
-    max_len = min(len(text[0]), 1024)
-    text = text[0][:max_len]
+    return text, url
 
-    return text
+
+# generate chunks of text \ sentences <= 1024 tokens
+def nest_sentences(document):
+    nested = []
+    sent = []
+    length = 0
+    for sentence in nltk.sent_tokenize(document):
+        length += len(sentence)
+        if length < 1024:
+            sent.append(sentence)
+        else:
+            nested.append(sent)
+            sent = [sentence]
+            length = len(sentence)
+
+    if sent:
+        nested.append(sent)
+    return nested
 
 
 st.header("New York Times Article Summarization")
 
 st.markdown('''
-This is a demo showcasing an app that summarizes articles found in the front
+This is a demo showcasing SOTA summarization task on articles found in the front
 page of New York Times. The summarization model is fine tuned on a news dataset
-to get better summaries. Pre-trained model barely trained for now.
+to get better summaries.
+
+Current HuggingFace model BART is limited to summarizting texts of only 1024 tokens. To handle
+summarization of longer text, the article is separated into chunks of 1024 tokens, and the
+model is run on each of the chunks.
+
+This implies that the current implementation is quite slow. Please allow some time for the long summary to generate.
 ''')
 
 # Default to <select>
@@ -60,14 +83,28 @@ if topic != '<select>':
 
         title_btn = st.button("Summarize Article")
 
+        length = st.sidebar.radio("Summarization length", ['Long', 'Medium', 'Short'])
+
         if title_btn:
-            text = get_summary(title)
+            text, url = get_summary_and_url(title)
+
+            nested = nest_sentences(text)
+
+            if length == 'Long':
+                n = len(nested)
+            if length == 'Medium':
+                n = len(nested)//2
+            if length == 'Short':
+                n = 1
 
             cfg = get_cfg_defaults()
             cfg.MODEL.DEVICE = 'cpu'
+            device = 'cpu'
             #  add_pretrained(cfg)
 
             predictor = SummaryPredictor(cfg.MODEL)
-
-            st.write(f'**Summary**: {predictor(text, cfg.MODEL)}')
-
+            summaries = predictor.generate_long_summary(nested[:n], device)
+            summaries = str('\n\n'.join(summaries))
+            st.write(f"**View original article:** {url}")
+            st.write("**Summary:**")
+            st.write(summaries)

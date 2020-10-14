@@ -40,5 +40,3 @@ class Registry(dict):
             return fn
 
         return register_fn
-
-

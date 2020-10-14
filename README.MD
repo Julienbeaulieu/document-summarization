@@ -1,5 +1,7 @@
 # New York Times Article Summarization App 
 
+![](outputs/nyt-summarization-screenshot.png)
+
 ## Overview
 
 This app summarizes articles found on the front page of The New York Times. The models used are fine tuned on a news dataset which makes them better at summarizing the articles. Front end is powered by Streamlit and deployed with Docker on Heroku. The Flask app can be used to run a summary on a given text.
@@ -37,7 +39,7 @@ YACS:
 Running `tasks/lint.sh` fully lints our codebase with a few different checkers:
 
 - `pipenv check` scans our Python package dependency graph for known security vulnerabilities
-- `pylint` does static analysis of Python files and reports both style and bug problems
+- `flake8` does static analysis of Python files and reports both style and bug problems
 - `pycodestyle` checks for simple code style guideline violations (somewhat overlapping with pylint)
 - `mypy` performs static type checking of Python files
 - `bandit` performs static analysis to find common security vulnerabilities in Python code

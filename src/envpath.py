@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from .utils.PULog import logger
-# This special script handles ALL environmental variable allow SINGLE import to get all necessary path and IDE friendly tracing.
+# This special script handles ALL environmental variable allow SINGLE import
+# to get all necessary path and IDE friendly tracing.
 
 
 path_keyword_raw = "path_raw"
