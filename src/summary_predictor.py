@@ -1,16 +1,17 @@
+from typing import Dict
 
 from .models.build_model import build_model
 
 
 class SummaryPredictor:
     """
-    Summarizes a given text
+    Summarizes a given text.
     """
-    def __init__(self, cfg):
+    def __init__(self, cfg: Dict):
         self.cfg = cfg
         self.model, self.tokenizer = build_model(self.cfg)
 
-    def __call__(self, text, cfg):
+    def __call__(self, text: str, cfg: Dict):
         """
         Summarize on a single text
         """
@@ -29,8 +30,12 @@ class SummaryPredictor:
                                       skip_special_tokens=True,
                                       clean_up_tokenization_spaces=True) for g in output][0]
 
-    def generate_long_summary(self, cfg, nested_sentences, device):
-        '''Generate summary on text with <= 1024 tokens'''
+    def generate_long_summary(self, cfg: Dict, nested_sentences: list, device):
+        """
+        Current HuggingFace model BART is limited to summarizting texts of only 1024 tokens. To handle
+        summarization of longer text, the article is separated into chunks of 1024 tokens, and the
+        model is run on each of the chunks.
+        """
 
         summaries = []
         for nested in nested_sentences:

@@ -1,5 +1,6 @@
 import os
 import torch
+import ntpath
 
 from ..envpath import AllPaths
 
@@ -64,15 +65,29 @@ hyperparameter_defaults = {
     # Path related configs
     ######################
     'path': {
-        'state_fpath': os.path.join(weights_path, 'model_01_epochs')
+        'state_fpath': os.path.join(weights_path, 'model_base')
     }
 
 }
 
 
-def get_cfg_defaults():
+def get_cfg_defaults(path=None):
     """
     Return a dict with default values
     """
+    if path:
+        filename = path_leaf(path)
+        hyperparameter_defaults['path']['state_fpath'] = os.path.join(weights_path, filename)
+
     return hyperparameter_defaults.copy()
 
+
+def path_leaf(path):
+    """
+    Extract file name from path, also remove extension file name
+    To be used as the name of the directory for the saved weights
+    Compatible with Linux and Windows
+    """
+    head, tail = ntpath.split(path)
+    tail = os.path.splitext(tail)[0]
+    return tail or os.path.splitext(ntpath.basename(head))[0]

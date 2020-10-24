@@ -1,14 +1,16 @@
 '''
-Run a basic experiment which fine tunes T5 model from hugging face using news_summary dataset
-Run validation, get average Rouge scores on predictions and save predictions to csv
+Run a basic experiment which fine tunes T5 or BART model from hugging face using news_summary 
+dataset. Run validation, get average Rouge scores on predictions and save predictions to csv
 '''
 
 import wandb
+import argparse
 import pandas as pd
 import numpy as np
 import pickle
 import yaml
 import torch
+from typing import Dict
 
 from .engine import train_model, evaluate
 from .data.news_dataset import build_news_loader
@@ -16,24 +18,27 @@ from .configs.default_configs import get_cfg_defaults
 from .models.build_model import build_model
 from .envpath import AllPaths
 
-# Get the dataset/raw path from AllPaths class
-data_path = AllPaths.processed
+# Get the dataset/processed path from AllPaths class
+processed_data_path = AllPaths.processed
 
 
-def main(cfg: dict, yaml_config: yaml, save_weights: bool = True, generate_csv_preds: bool = True):
+def main(cfg: Dict, yaml_config: yaml, save_weights: bool = True, generate_csv_preds: bool = True):
 
     # WandB – Initialize a new run
     wandb.init(project="transformers_tutorials_summarization", config=cfg)
+
+    # Merge yaml config file with cfg
     wandb.config.update(yaml_config, allow_val_change=True)
     cfg = wandb.config
 
     # Set random seeds and deterministic pytorch for reproducibility
     torch.manual_seed(cfg['training']['seed'])  # pytorch random seed
     np.random.seed(cfg['training']['seed'])  # numpy random seed
-    # torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
 
-    train_data = pickle.load(open(data_path / cfg['dataset']['training'], 'rb'))
-    valid_data = pickle.load(open(data_path / cfg['dataset']['validation'], 'rb'))
+    train_data = pickle.load(open(processed_data_path / cfg['dataset']['training'], 'rb'))
+    valid_data = pickle.load(open(processed_data_path / cfg['dataset']['validation'], 'rb'))
 
     # Get model and tokenzier for encoding the text
     model, tokenizer = build_model(cfg['model'])  # type: ignore
@@ -45,6 +50,7 @@ def main(cfg: dict, yaml_config: yaml, save_weights: bool = True, generate_csv_p
 
     # Log metrics with wandb
     wandb.watch(model, log="all")  # type: ignore
+
     # Training loop
     print('Initiating Fine-Tuning for the model on our dataset')
 
@@ -71,8 +77,6 @@ def main(cfg: dict, yaml_config: yaml, save_weights: bool = True, generate_csv_p
 
 
 if __name__ == '__main__':
-    import argparse
-    cfg = get_cfg_defaults()
 
     parser = argparse.ArgumentParser()
     parser.add_argument("experiment_filename", nargs='?', type=str, help="Filename of the YAML experiment file")
@@ -81,7 +85,9 @@ if __name__ == '__main__':
     if args.experiment_filename:
         with open(args.experiment_filename) as file:
             yaml_config = yaml.load(file, Loader=yaml.FullLoader)
-    else: 
+    else:
         yaml_config = {}
+    
+    cfg = get_cfg_defaults(args.experiment_filename)
 
     main(cfg, yaml_config)
