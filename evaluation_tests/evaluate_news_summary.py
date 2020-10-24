@@ -1,6 +1,6 @@
 from src.engine import evaluate
 from src.data.news_dataset import build_news_loader
-from src.configs.yacs_configs import get_cfg_defaults
+from src.configs.default_configs import get_cfg_defaults
 from src.models.build_model import build_model
 from src.envpath import AllPaths
 
@@ -19,16 +19,16 @@ class TestEvaluateNewsSummary(unittest.TestCase):
     def test_evaluate(self):
         cfg = get_cfg_defaults()
 
-        model, tokenizer = build_model(cfg.MODEL)  # type: ignore
+        model, tokenizer = build_model(cfg['model'])  # type: ignore
 
-        valid_data = pickle.load(open(processed_data_path / 'news_validation_32.p', 'rb'))
-        val_loader = build_news_loader(valid_data, tokenizer, cfg.TRAINING, False)  # type: ignore
+        valid_data = pickle.load(open(processed_data_path / cfg['dataset']['validation'], 'rb'))
+        val_loader = build_news_loader(valid_data, tokenizer, cfg['training'], False)  # type: ignore
 
         t = time()
-        predictions, actuals, eval_dict = evaluate(cfg.MODEL,
+        predictions, actuals, eval_dict = evaluate(cfg['model'],
                                                    tokenizer,
                                                    model,
-                                                   cfg.MODEL.DEVICE,
+                                                   cfg['model']['device'],
                                                    val_loader,
                                                    wandb_log=False
                                                    )  # type: ignore

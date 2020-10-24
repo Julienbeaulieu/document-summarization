@@ -4,7 +4,7 @@ import api.SessionState as SessionState
 import streamlit as st
 
 from src.summary_predictor import SummaryPredictor
-from src.configs.yacs_configs import get_cfg_defaults  # , add_pretrained
+from src.configs.default_configs import get_cfg_defaults  # , add_pretrained
 from api.new_york_times_api import get_data, add_text_columns
 
 os.environ["CUDA_VISIBLE_DEVICES"] = ""  # Do  not use GPU
@@ -100,13 +100,13 @@ if topic != '<select>':
                 n = 1
 
             cfg = get_cfg_defaults()
-            cfg.MODEL.DEVICE = 'cpu'
+            cfg['model']['device'] = 'cpu'
             device = 'cpu'
             if len(text) < 1500:
-                cfg.MODEL.MAX_LENGTH = 200
+                cfg['model']['max_length'] = 200
 
-            predictor = SummaryPredictor(cfg.MODEL)
-            summaries = predictor.generate_long_summary(cfg.MODEL, nested[:n], device)
+            predictor = SummaryPredictor(cfg['model'])
+            summaries = predictor.generate_long_summary(cfg['model'], nested[:n], device)
             summaries = str('\n\n'.join(summaries))
             st.write(f"**View original article:** {url}")
             st.write("**Summary:**")

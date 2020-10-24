@@ -19,11 +19,11 @@ class SummaryPredictor:
         input_ids = self.tokenizer.encode(text, return_tensors="pt")
         input_ids = input_ids.to(cfg.DEVICE)
         output = self.model.generate(input_ids,
-                                     max_length=cfg.MAX_LENGTH,
-                                     num_beams=cfg.NUM_BEAMS,
-                                     repetition_penalty=cfg.REPETITION_PENALTY,
-                                     length_penalty=cfg.LENGTH_PENALTY,
-                                     early_stopping=cfg.EARLY_STOPPING)
+                                     max_length=cfg['max_len'],
+                                     num_beams=cfg['num_beams'],
+                                     repetition_penalty=cfg['repetition_penalty'],
+                                     length_penalty=cfg['length_penalty'],
+                                     early_stopping=cfg['early_stopping'])
 
         return [self.tokenizer.decode(g,
                                       skip_special_tokens=True,
@@ -37,9 +37,9 @@ class SummaryPredictor:
             input_tokenized = self.tokenizer.encode(' '.join(nested), truncation=True, return_tensors='pt')
             input_tokenized = input_tokenized.to(device)
             summary_ids = self.model.to(device).generate(input_tokenized,
-                                                         length_penalty=cfg.LENGTH_PENALTY,
+                                                         length_penalty=cfg['length_penalty'],
                                                          min_length=80,
-                                                         max_length=cfg.MAX_LENGTH)
+                                                         max_length=cfg['max_len'])
             output = [self.tokenizer.decode(g,
                                             skip_special_tokens=True,
                                             clean_up_tokenization_spaces=False) for g in summary_ids]

@@ -17,4 +17,3 @@ streamlit
 torch
 transformers
 wandb
-yacs

@@ -25,18 +25,14 @@ In this project I use a modular design inspired by [Detectron2](https://github.c
 
 See the `utils/registry.py` file, `src/models` folder, and `src/configs` folder to see how this is implemented.
 
-## Experiment Management with Weights and Biases + YACS
+## Experiment Management with Weights and Biases
 
 W & B:
 
 - Keep track of all experiments in one place
 - Easily compare runs
-- Run multiple experiments
+- Run multiple experiments from experiments found in src/configs/experiments
 - Run sweeps: automated trials of hyper-parameters
-
-YACS:
-
-- Configuration of hyperparameters and custom module implementation management
 
 ## Linting Script
 

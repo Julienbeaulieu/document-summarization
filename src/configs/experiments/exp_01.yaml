@@ -1,2 +1,12 @@
-MODEL:
-    MODEL_ARCH: t5
+model: 
+    model_arch: t5
+    device: cuda
+    max_len: 120
+    num_beams: 3
+    repetition_penalty: 2.5
+    length_penalty: 2.0
+    early_stopping: True
+    t5: 
+        pretrained: t5-base
+        tok_pretrained: t5-base
+    

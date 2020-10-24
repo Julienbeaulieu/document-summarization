@@ -2,7 +2,7 @@ import os
 from flask import Flask, request, jsonify
 
 from src.summary_predictor import SummaryPredictor
-from src.configs.yacs_configs import get_cfg_defaults, add_pretrained
+from src.configs.default_configs import get_cfg_defaults
 
 # Run: cd api | python -m flask run
 
@@ -24,10 +24,9 @@ def predict():
     text = str(load_text())
 
     cfg = get_cfg_defaults()
-    add_pretrained(cfg)
 
-    predictor = SummaryPredictor(cfg.MODEL)
-    pred = predictor(text, cfg.MODEL)
+    predictor = SummaryPredictor(cfg['model'])
+    pred = predictor(text, cfg['model'])
 
     return jsonify({'pred': str(pred)})
 

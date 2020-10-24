@@ -2,7 +2,6 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 import pandas as pd
 
-from yacs.config import CfgNode
 from pathlib import Path
 
 data_path = Path('/home/nasty/document-summarization/dataset/processed')
@@ -54,7 +53,7 @@ class NewsDataset(Dataset):
         }
 
 
-def build_news_loader(df: pd.DataFrame, tokenizer, cfg: CfgNode, is_training: bool) -> DataLoader:
+def build_news_loader(df: pd.DataFrame, tokenizer, cfg: dict, is_training: bool) -> DataLoader:
     """
     generate data loader
     :param df: DataFrame
@@ -65,11 +64,11 @@ def build_news_loader(df: pd.DataFrame, tokenizer, cfg: CfgNode, is_training: bo
     """
 
     if is_training:
-        batch_size = cfg.TRAIN_BATCH_SIZE
+        batch_size = cfg['train_batch_size']
     else:
-        batch_size = cfg.VALID_BATCH_SIZE
+        batch_size = cfg['valid_batch_size']
 
-    dataset = NewsDataset(df, tokenizer, cfg.MAX_LEN, cfg.SUMMARY_LEN)
+    dataset = NewsDataset(df, tokenizer, cfg['max_len'], cfg['summary_len'])
 
     data_loader = DataLoader(dataset, batch_size=batch_size, shuffle=is_training)
     return data_loader

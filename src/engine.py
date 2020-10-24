@@ -8,7 +8,7 @@ from rouge_score import rouge_scorer
 
 
 # Fine tune model
-def train_model(cfg, epoch: int, tokenizer, model, device, loader: DataLoader, optimizer):
+def train_model(cfg: Dict, epoch: int, tokenizer, model, device, loader: DataLoader, optimizer):
     model.train()
     train_preds = []
     train_targets = []
@@ -43,7 +43,7 @@ def train_model(cfg, epoch: int, tokenizer, model, device, loader: DataLoader, o
         optimizer.step()
 
 
-def evaluate(cfg,
+def evaluate(cfg: Dict,
              tokenizer,
              model,
              device,
@@ -103,11 +103,11 @@ def prepare_inputs(inputs, tokenizer, device):
 def predict_batch(cfg, model, tokenizer, ids, mask=None):
     generated_ids = model.generate(input_ids=ids,
                                    attention_mask=mask,
-                                   max_length=cfg.MAX_LENGTH,
-                                   num_beams=cfg.NUM_BEAMS,
-                                   repetition_penalty=cfg.REPETITION_PENALTY,
-                                   length_penalty=cfg.LENGTH_PENALTY,
-                                   early_stopping=cfg.EARLY_STOPPING
+                                   max_length=cfg['max_len'],
+                                   num_beams=cfg['num_beams'],
+                                   repetition_penalty=cfg['repetition_penalty'],
+                                   length_penalty=cfg['length_penalty'],
+                                   early_stopping=cfg['early_stopping']
                                    )
 
     return [tokenizer.decode(g, skip_special_tokens=True,
