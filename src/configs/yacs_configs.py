@@ -16,6 +16,11 @@ __C = ConfigurationNode()
 cfg = __C
 __C.DESCRIPTION = 'Default config from the Singleton'
 
+__C.DATASET = ConfigurationNode()
+__C.DATASET.TRAINING = 'news_training_128.p'  # news_training.p
+__C.DATASET.VALIDATION = 'news_validation_32.p'  # news_validation.p
+__C.DATASET.TEST = ''
+
 __C.TRAINING = ConfigurationNode()
 __C.TRAINING.TRAIN_BATCH_SIZE = 2
 __C.TRAINING.VALID_BATCH_SIZE = 2

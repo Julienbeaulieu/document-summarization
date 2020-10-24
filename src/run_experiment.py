@@ -31,12 +31,11 @@ def main(cfg: CfgNode):
     np.random.seed(cfg.TRAINING.SEED)  # numpy random seed
     # torch.backends.cudnn.deterministic = True
 
-    # tokenzier for encoding the text
+    train_data = pickle.load(open(data_path / cfg.DATASET.TRAINING, 'rb'))
+    valid_data = pickle.load(open(data_path / cfg.DATASET.VALIDATION, 'rb'))
 
+    # Get model and tokenzier for encoding the text
     model, tokenizer = build_model(cfg.MODEL)  # type: ignore
-
-    train_data = pickle.load(open(data_path / 'news_training_128.p', 'rb'))
-    valid_data = pickle.load(open(data_path / 'news_validation_32.p', 'rb'))
 
     train_loader = build_news_loader(train_data, tokenizer, cfg.TRAINING, True)  # type: ignore
     val_loader = build_news_loader(valid_data, tokenizer, cfg.TRAINING, False)  # type: ignore
@@ -69,5 +68,11 @@ def main(cfg: CfgNode):
 
 
 if __name__ == '__main__':
+    import argparse
     cfg = get_cfg_defaults()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("experiment_filename", type=str, help="Filename of the YAML experiment file")
+    args = parser.parse_args()
+    cfg.merge_from_file(args.experiment_filename)
+    print(cfg)
     main(cfg)

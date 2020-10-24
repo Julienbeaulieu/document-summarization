@@ -18,7 +18,7 @@ def train_model(cfg, epoch: int, tokenizer, model, device, loader: DataLoader, o
         outputs = model(input_ids=inputs['ids'],
                         attention_mask=inputs['mask'],
                         decoder_input_ids=inputs['y_ids'],
-                        lm_labels=inputs['lm_labels'])
+                        labels=inputs['lm_labels'])
 
         train_loss = outputs[0]
 
@@ -30,9 +30,9 @@ def train_model(cfg, epoch: int, tokenizer, model, device, loader: DataLoader, o
         train_targets.extend(targets)
 
         if _ % 10 == 0:
-            wandb.log({"Training Loss": train_loss.item()})
             train_eval_dict = evaluate_on_rouge_scores(train_targets, train_preds)
             wandb.log({"Train Rouge Scores": train_eval_dict})
+            wandb.log({"Training Loss": train_loss.item()})
             print(f'Train Rouge scores: {train_eval_dict}')
 
         if _ % 500 == 0:

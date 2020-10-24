@@ -30,13 +30,13 @@ class NewsDataset(Dataset):
 
         source = self.tokenizer.batch_encode_plus([ctext],
                                                   max_length=self.source_len,
-                                                  pad_to_max_length=True,
+                                                  padding='max_length',
                                                   return_tensors='pt',
                                                   truncation=True
                                                   )
         target = self.tokenizer.batch_encode_plus([text],
                                                   max_length=self.summ_len,
-                                                  pad_to_max_length=True,
+                                                  padding='max_length',
                                                   return_tensors='pt',
                                                   truncation=True
                                                   )
