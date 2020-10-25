@@ -25,10 +25,10 @@ def predict():
 
     cfg = get_cfg_defaults()
 
-    predictor = SummaryPredictor(cfg['model'])
-    pred = predictor(text, cfg['model'])
+    predictor = SummaryPredictor(cfg["model"])
+    pred = predictor(text, cfg["model"])
 
-    return jsonify({'pred': str(pred)})
+    return jsonify({"pred": str(pred)})
 
 
 def load_text():

@@ -8,12 +8,12 @@ processed_data_path = AllPaths.processed
 
 
 @click.command()
-@click.option('--size', default=0, help="create a sample training and validation set")
+@click.option("--size", default=0, help="create a sample training and validation set")
 def create_datasets(size: int = 0, train_test_split: float = 0.8):
 
-    df = pd.read_csv(raw_data_path / '/news_summary.csv', encoding='latin-1')
-    df = df[['text', 'ctext']]
-    df.ctext = 'summarize: ' + df.ctext
+    df = pd.read_csv(raw_data_path / "/news_summary.csv", encoding="latin-1")
+    df = df[["text", "ctext"]]
+    df.ctext = "summarize: " + df.ctext
 
     # If n_sample_size not specified, use entire data set.
     # If too large, use entire data set.
@@ -31,9 +31,15 @@ def create_datasets(size: int = 0, train_test_split: float = 0.8):
     print("TRAIN Dataset: {}".format(train_dataset.shape))
     print("VALIDATION Dataset: {}".format(val_dataset.shape))
 
-    pickle.dump(train_dataset, open(processed_data_path / f'/news_training_{train_dataset.shape[0]}.p', "wb"))
-    pickle.dump(val_dataset, open(processed_data_path / f'/news_validation_{val_dataset.shape[0]}.p', "wb"))
+    pickle.dump(
+        train_dataset,
+        open(processed_data_path / f"/news_training_{train_dataset.shape[0]}.p", "wb"),
+    )
+    pickle.dump(
+        val_dataset,
+        open(processed_data_path / f"/news_validation_{val_dataset.shape[0]}.p", "wb"),
+    )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     create_datasets()

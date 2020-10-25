@@ -12,7 +12,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = ""  # Do  not use GPU
 # Hack to add session state to Streamlit
 topic_session_state = SessionState.get(name="", button_sent=False)
 
-nltk.download('punkt')
+nltk.download("punkt")
 
 
 # Fetch Texts from NYT front page
@@ -54,7 +54,8 @@ def nest_sentences(document):
 
 st.header("New York Times Article Summarization")
 
-st.markdown('''
+st.markdown(
+    """
 This is a demo showcasing SOTA summarization task on articles found on the front
 page of New York Times. The summarization model is fine tuned on a news dataset
 to get better summaries.
@@ -64,15 +65,16 @@ summarization of longer text, the article is separated into chunks of 1024 token
 model is run on each of the chunks.
 
 This implies that the current implementation is quite slow. Please allow some time for the long summary to generate.
-''')
+"""
+)
 
 # Default to <select>
-topics = ['<select>', 'home', 'arts', 'science', 'us', 'world']
+topics = ["<select>", "home", "arts", "science", "us", "world"]
 topic = st.sidebar.selectbox("Enter a topic", topics, 0)
 
 topic_btn = st.button("Get Articles")
 
-if topic != '<select>':
+if topic != "<select>":
 
     if topic_btn:
         topic_session_state.button_sent = True
@@ -85,29 +87,31 @@ if topic != '<select>':
 
         title_btn = st.button("Summarize Article")
 
-        length = st.sidebar.radio("Summarization length", ['Long', 'Medium', 'Short'])
+        length = st.sidebar.radio("Summarization length", ["Long", "Medium", "Short"])
 
         if title_btn:
             text, url = get_summary_and_url(title)
 
             nested = nest_sentences(text)
-        
-            if length == 'Long':
+
+            if length == "Long":
                 n = len(nested)
-            if length == 'Medium':
+            if length == "Medium":
                 n = len(nested) // 2
-            if length == 'Short':
+            if length == "Short":
                 n = 1
 
             cfg = get_cfg_defaults()
-            cfg['model']['device'] = 'cpu'
-            device = 'cpu'
+            cfg["model"]["device"] = "cpu"
+            device = "cpu"
             if len(text) < 1500:
-                cfg['model']['max_length'] = 200
+                cfg["model"]["max_length"] = 200
 
-            predictor = SummaryPredictor(cfg['model'])
-            summaries = predictor.generate_long_summary(cfg['model'], nested[:n], device)
-            summaries = str('\n\n'.join(summaries))
+            predictor = SummaryPredictor(cfg["model"])
+            summaries = predictor.generate_long_summary(
+                cfg["model"], nested[:n], device
+            )
+            summaries = str("\n\n".join(summaries))
             st.write(f"**View original article:** {url}")
             st.write("**Summary:**")
             st.write(summaries)

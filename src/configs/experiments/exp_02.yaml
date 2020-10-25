@@ -1,0 +1,11 @@
+dataset:
+    training: news_training.p
+    validation: news_validation.p
+training:
+    train_batch_size: 2
+    valid_batch_size: 2
+    train_epochs: 3
+    learning_rate: 0.001
+    seed: 42
+    max_len: 512
+    summary_len: 150
