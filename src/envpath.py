@@ -14,7 +14,7 @@ class GetPath:
 
     root: root_dir = root_dir
     data: data_dir = data_dir
-    raw: Path = Path(root_dir / 'raw')
+    raw: Path = Path(data_dir / 'raw')
     processed: Path = Path(data_dir / 'processed')
     output:    Path = Path(root_dir, 'outputs')
     trained_weights: Path = Path(root_dir, 'weights')
