@@ -31,7 +31,7 @@ def main(
 ):
 
     # WandB – Initialize a new run
-    wandb.init(project="nyt_summarization_app", config=cfg)
+    wandb.init(project="nyt_summarization_app", name=cfg["path"]["experiment_name"], config=cfg)
 
     # Merge yaml config file with cfg
     wandb.config.update(yaml_config, allow_val_change=True)

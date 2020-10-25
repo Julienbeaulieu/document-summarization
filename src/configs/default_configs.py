@@ -6,6 +6,7 @@ from ..envpath import AllPaths
 
 # Get the dataset/raw path from AllPaths class
 weights_path = AllPaths.trained_weights
+experiment_path = AllPaths.experiments
 
 # We can overwrite these settings using YAML files. All YAML variables MUST BE defined here first
 # as this is the master list of ALL attributes.
@@ -51,10 +52,11 @@ hyperparameter_defaults = {
             "tok_pretrained": "facebook/bart-large-cnn",  # './src/weights/bart_large_cnn'
         },
     },
-    ######################
-    # Path related configs
-    ######################
-    "path": {"state_fpath": os.path.join(weights_path, "model_base")},
+    ######################################
+    # Path and  experiment related configs
+    ######################################
+    "path": {"state_fpath": os.path.join(weights_path, "model_base"),
+             "experiment_name": ''},
 }
 
 
@@ -71,6 +73,7 @@ def get_cfg_defaults(path=None):
         hyperparameter_defaults["path"]["state_fpath"] = os.path.join(
             weights_path, filename
         )
+        hyperparameter_defaults["path"]["experiment_name"] = filename
 
     return hyperparameter_defaults.copy()
 

@@ -15,26 +15,30 @@ topic_session_state = SessionState.get(name="", button_sent=False)
 nltk.download("punkt")
 
 
-# Fetch Texts from NYT front page
 @st.cache
 def get_text(topic):
-
+    """
+    Fetch Texts from NYT front page
+    """
     df = get_data(topic)
     return add_text_columns(df)
 
 
 @st.cache
 def get_summary_and_url(title):
-
-    # Get the text of the article based on the title that is given
+    """
+    Get the text and URL of the article based on the title that is given
+    """
     text = df.loc[df.title == title].article_text.values[0]
     url = df.loc[df.title == title].url.values[0]
 
     return text, url
 
 
-# generate chunks of text \ sentences <= 1024 tokens
 def nest_sentences(document):
+    """
+    Generate chunks of text from sentences <= 1024 tokens
+    """
     nested = []
     sent = []
     length = 0
