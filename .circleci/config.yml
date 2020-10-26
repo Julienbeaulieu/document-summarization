@@ -48,11 +48,11 @@ jobs:
           command: |
             sh ./tasks/lint.sh
 
-      - run:
-          name: run evaluation tests
-          when: always 
-          command: |
-            sh ./tasks/run_evaluation_tests.sh
+      # - run:
+      #     name: run evaluation tests
+      #     when: always 
+      #     command: |
+      #       sh ./tasks/run_evaluation_tests.sh
 
       - store_artifacts:
           path: test-reports

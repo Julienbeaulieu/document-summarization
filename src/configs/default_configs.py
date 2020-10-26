@@ -55,8 +55,10 @@ hyperparameter_defaults = {
     ######################################
     # Path and  experiment related configs
     ######################################
-    "path": {"state_fpath": os.path.join(weights_path, "model_base"),
-             "experiment_name": ''},
+    "path": {
+        "state_fpath": os.path.join(weights_path, "model_base"),
+        "experiment_name": "",
+    },
 }
 
 

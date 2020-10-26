@@ -1,20 +1,28 @@
 import torch
 import wandb
-from time import time
-from torch.utils.data import DataLoader
-from typing import List, Tuple, Any, Dict
+from typing import Dict, List
 from rouge_score import rouge_scorer
 
 
 # Fine tune model
 def train_model(
-    cfg: Dict, epoch: int, tokenizer, model, device, loader: DataLoader, optimizer, scheduler
+    cfg: Dict,
+    epoch: int,
+    tokenizer,
+    model,
+    device,
+    train_loader,
+    val_loader,
+    optimizer,
+    scheduler,
 ):
+
     model.train()
-    train_preds = []
-    train_targets = []
-    for _, data in enumerate(loader, 0):
-        inputs = prepare_inputs(data, tokenizer, device)
+    train_preds, train_targets = [], []
+    total_train_loss = 0
+
+    for step, batch in enumerate(train_loader, 0):
+        inputs = prepare_inputs(batch, tokenizer, device)
 
         outputs = model(
             input_ids=inputs["ids"],
@@ -26,6 +34,7 @@ def train_model(
         train_loss = outputs[0]
 
         preds = predict_batch(cfg, model, tokenizer, inputs["ids"], inputs["mask"])
+
         targets = [
             tokenizer.decode(
                 t, skip_special_tokens=True, clean_up_tokenization_spaces=True
@@ -35,15 +44,21 @@ def train_model(
 
         train_preds.extend(preds)
         train_targets.extend(targets)
+        total_train_loss += train_loss
 
-        if _ % 10 == 0:
+        if step % 50 == 0:
+            # Evaluate on training
             train_eval_dict = evaluate_on_rouge_scores(train_targets, train_preds)
+
+            # Log to wandb
             wandb.log({"Train Rouge Scores": train_eval_dict})
             wandb.log({"Training Loss": train_loss.item()})
-            wandb.log({"lr": optimizer.param_groups[-1]['lr']})
-            print(f"Train Rouge scores: {train_eval_dict}")
+            wandb.log({"lr": optimizer.param_groups[-1]["lr"]})
+            print(
+                f"Batch {step} of {len(train_loader)}, Train Rouge scores: {train_eval_dict}"
+            )
 
-        if _ % 500 == 0:
+        if step % 300 == 0:
             print(f"Epoch: {epoch}, Train loss: {train_loss.item()}")
 
         optimizer.zero_grad()
@@ -51,22 +66,26 @@ def train_model(
         optimizer.step()
         scheduler.step()
 
+    avg_train_loss = total_train_loss / len(train_loader)
+    wandb.log({"avg_train_loss": avg_train_loss})
+    print(f"  Average training  loss: {avg_train_loss}")
+    print("Running Validation...")
 
-def evaluate(
-    cfg: Dict,
-    tokenizer,
-    model,
-    device,
-    loader: DataLoader,
-    wandb_log=True,
-    eval_type="train",
-) -> Tuple[List[Any], List[Any], Dict[Any, Any]]:
+    # Beging validation
     model.eval()
-    preds = []
-    targets = []
+
+    # Initialize preds and metrics to log
+    valid_preds, valid_targets = [], []
+    total_eval_loss = 0
+    valid_rouge_dict = {
+        "rouge1": 0,
+        "rouge2": 0,
+        "rougeL": 0,
+    }
+
     with torch.no_grad():
-        for _, data in enumerate(loader, 0):
-            inputs = prepare_inputs(data, tokenizer, device)
+        for step, batch in enumerate(val_loader, 0):
+            inputs = prepare_inputs(batch, tokenizer, device)
 
             outputs = model(
                 input_ids=inputs["ids"],
@@ -75,7 +94,7 @@ def evaluate(
                 labels=inputs["lm_labels"],
             )
 
-            loss = outputs[0]
+            val_loss = outputs[0]
 
             batch_preds = predict_batch(
                 cfg, model, tokenizer, inputs["ids"], inputs["mask"]
@@ -87,21 +106,35 @@ def evaluate(
                 )
                 for t in inputs["y"]
             ]
-            preds.extend(batch_preds)
-            targets.extend(batch_targets)
+            valid_preds.extend(batch_preds)
+            valid_targets.extend(batch_targets)
+            total_eval_loss += val_loss
 
-            if _ % 10 == 0:
-                print(f"Completed {_}")
+            if step % 50 == 0:
+
                 # Log rouge scores
-                t = time()
-                eval_dict = evaluate_on_rouge_scores(targets, preds)
-                if wandb_log:
-                    wandb.log({"Valid Loss": loss.item()})
-                    wandb.log({"Valid Rouge Scores": eval_dict})
-                time_taken = time() - t
-                print(f"Valid Rouge scores: {eval_dict} \n Time taken: {time_taken}")
+                eval_dict = evaluate_on_rouge_scores(valid_targets, valid_preds)
 
-    return preds, targets, eval_dict
+                wandb.log({"Valid Loss": val_loss.item()})
+                wandb.log({"Valid Rouge Scores": eval_dict})
+
+                valid_rouge_dict["rouge1"] += eval_dict["rouge1"]
+                valid_rouge_dict["rouge2"] += eval_dict["rouge2"]
+                valid_rouge_dict["rougeL"] += eval_dict["rougeL"]
+
+                print(f"Valid Rouge scores: {eval_dict}")
+
+        valid_rouge_dict["rouge1"] = valid_rouge_dict["rouge1"] / (len(val_loader) / 50)
+        valid_rouge_dict["rouge2"] += eval_dict["rouge2"] / (len(val_loader) / 50)
+        valid_rouge_dict["rougeL"] += eval_dict["rougeL"] / (len(val_loader) / 50)
+
+        avg_valid_loss = total_eval_loss / len(val_loader)
+
+        wandb.log(
+            {"avg_valid_loss": avg_valid_loss, "avg_rouge_scores": valid_rouge_dict}
+        )
+
+        print(f"  Average validation loss: {avg_valid_loss}")
 
 
 def prepare_inputs(inputs, tokenizer, device):

@@ -10,3 +10,11 @@ model:
         pretrained: t5-base
         tok_pretrained: t5-base
     
+training:
+    train_batch_size: 2
+    valid_batch_size: 2
+    train_epochs: 2
+    learning_rate: 0.0001
+    seed: 42
+    max_len: 512
+    summary_len: 120

@@ -19,7 +19,7 @@ class SummaryPredictor:
         assert isinstance(text, str), "text must be a string"
 
         input_ids = self.tokenizer.encode(text, return_tensors="pt")
-        input_ids = input_ids.to(cfg['device'])
+        input_ids = input_ids.to(cfg["device"])
         output = self.model.generate(
             input_ids,
             max_length=cfg["max_len"],

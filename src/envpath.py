@@ -19,7 +19,7 @@ class GetPath:
     processed: Path = Path(data_dir / "processed")
     output: Path = Path(root_dir, "outputs")
     trained_weights: Path = Path(root_dir, "weights")
-    experiments: Path = Path(root_dir / "src/configs/experiments")
+    experiments: Path = Path(root_dir / "src/configs/experiment_configs")
 
 
 # This is THE Singleton that stores all path information.
