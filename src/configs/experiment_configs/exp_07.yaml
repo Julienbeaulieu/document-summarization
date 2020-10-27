@@ -1,6 +1,18 @@
 dataset:
     training: news_training.p
     validation: news_validation.p
+
+model: 
+    model_arch: t5
+    device: cuda
+    max_len: 90
+    num_beams: 2
+    repetition_penalty: 2.5
+    length_penalty: 2.0
+    early_stopping: True
+    t5: 
+        pretrained: t5-base
+        tok_pretrained: t5-base
         
 training:
     train_batch_size: 2
@@ -10,5 +22,5 @@ training:
     seed: 42
     max_len: 512
     summary_len: 120
-    scheduler: constant_schedule_with_warmup
+    scheduler: cosine_schedule_with_warmup
     scheduler_warmup_steps: 800

@@ -17,6 +17,7 @@ from .engine import train_model
 from .data.news_dataset import build_news_loader
 from .configs.default_configs import get_cfg_defaults
 from .models.build_model import build_model
+from .models.optimizer import build_scheduler
 from .envpath import AllPaths
 
 # Get the dataset/processed path from AllPaths class
@@ -65,7 +66,9 @@ def main(
 
     optimizer = transformers.AdamW(params=model.parameters(), lr=cfg["training"]["learning_rate"])  # type: ignore
 
-    scheduler = transformers.get_constant_schedule_with_warmup(optimizer, 800)
+    # Get scheduler
+    num_training_steps = len(train_loader)
+    scheduler = build_scheduler(optimizer, cfg['training'], num_training_steps)
 
     # Log metrics with wandb
     wandb.watch(model, log="all")  # type: ignore

@@ -51,6 +51,8 @@ hyperparameter_defaults = {
             "pretrained": "facebook/bart-large-cnn",  # './src/weights/bart_large_cnn'
             "tok_pretrained": "facebook/bart-large-cnn",  # './src/weights/bart_large_cnn'
         },
+        "scheduler": "constant_schedule_with_warmup",
+        "scheduler_warmup_steps": 800
     },
     ######################################
     # Path and  experiment related configs

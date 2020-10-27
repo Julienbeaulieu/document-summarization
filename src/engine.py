@@ -46,7 +46,7 @@ def train_model(
         train_targets.extend(targets)
         total_train_loss += train_loss
 
-        if step % 50 == 0:
+        if step % 10 == 0:
             # Evaluate on training
             train_eval_dict = evaluate_on_rouge_scores(train_targets, train_preds)
 
@@ -110,7 +110,7 @@ def train_model(
             valid_targets.extend(batch_targets)
             total_eval_loss += val_loss
 
-            if step % 50 == 0:
+            if step % 10 == 0:
 
                 # Log rouge scores
                 eval_dict = evaluate_on_rouge_scores(valid_targets, valid_preds)
@@ -124,9 +124,9 @@ def train_model(
 
                 print(f"Valid Rouge scores: {eval_dict}")
 
-        valid_rouge_dict["rouge1"] = valid_rouge_dict["rouge1"] / (len(val_loader) / 50)
-        valid_rouge_dict["rouge2"] += eval_dict["rouge2"] / (len(val_loader) / 50)
-        valid_rouge_dict["rougeL"] += eval_dict["rougeL"] / (len(val_loader) / 50)
+        valid_rouge_dict["rouge1"] = valid_rouge_dict["rouge1"] / (len(val_loader) / 10)
+        valid_rouge_dict["rouge2"] += eval_dict["rouge2"] / (len(val_loader) / 10)
+        valid_rouge_dict["rougeL"] += eval_dict["rougeL"] / (len(val_loader) / 10)
 
         avg_valid_loss = total_eval_loss / len(val_loader)
 

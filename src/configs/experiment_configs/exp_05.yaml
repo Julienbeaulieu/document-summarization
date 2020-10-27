@@ -10,3 +10,5 @@ training:
     seed: 42
     max_len: 512
     summary_len: 120
+    scheduler: constant_schedule_with_warmup
+    scheduler_warmup_steps: 800
