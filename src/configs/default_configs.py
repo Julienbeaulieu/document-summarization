@@ -13,6 +13,7 @@ experiment_path = AllPaths.experiments
 
 hyperparameter_defaults = {
     "description": "Default config from the Singleton",
+    
     #########################
     # Dataset related configs
     #########################
