@@ -6,7 +6,7 @@
 
 ## Overview
 
-This app summarizes articles found on the front page of The New York Times. For this task, I use HuggingFace's BART model and fine tune it on a news dataset.
+This app summarizes articles found on the front page of The New York Times. For this task, I use HuggingFace's BART model and fine tune it on a news dataset. 
 
 Front end is powered by Streamlit and deployed with Docker on Google App Engine. We can also run a Flask server get a summary on a given text.
 
