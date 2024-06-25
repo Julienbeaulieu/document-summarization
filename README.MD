@@ -1,6 +1,6 @@
 # New York Times Article Summarization App
 
-![](outputs/nyt-summarization-screenshot.png)
+![](outputs/nyt-summarization-screenshot.png) 
 
 **App link:** https://summarization-app.ue.r.appspot.com/
 
@@ -27,7 +27,7 @@ See the `utils/registry.py` file, `src/models` folder, and `src/configs` folder 
 
 ## Experiment Management with Weights and Biases
 
-W & B:
+W & B :
 
 - Keep track of all experiments in one place
 - Easily compare runs
